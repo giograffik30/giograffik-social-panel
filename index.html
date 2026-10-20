@@ -3,13 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Giograffik TikTok Publisher v5.5</title>
+  <title>Giograffik TikTok Publisher v5.6 - Swipe Carousel</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    
+    /* Carousel TikTok Scroll Snap */
+    .snap-x-mandatory {
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+    }
+    .snap-center-item {
+      scroll-snap-align: center;
+      flex-shrink: 0;
+    }
+    
     @keyframes spin-slow {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
@@ -21,7 +32,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-center items-center p-4 sm:p-6">
 
-  <div class="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-2xl">
+  <div class="max-w-2xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-2xl">
     
     <!-- HEADER -->
     <div class="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -32,52 +43,81 @@
         <div>
           <div class="flex items-center space-x-2">
             <h1 class="font-bold text-lg text-white">Giograffik <span class="text-cyan-400">TikTok Publisher</span></h1>
-            <span class="text-[10px] bg-cyan-950 text-cyan-400 border border-cyan-800 font-semibold px-2 py-0.5 rounded-full">v5.5</span>
+            <span class="text-[10px] bg-cyan-950 text-cyan-400 border border-cyan-800 font-semibold px-2 py-0.5 rounded-full">v5.6</span>
           </div>
-          <p class="text-xs text-slate-400">Modo Fotos Multi-Carrusel (Más de 10 fotos) sin reemplazar</p>
+          <p class="text-xs text-slate-400">Acumulador de Fotos & Vista Previa Deslizable (Swipe)</p>
         </div>
       </div>
-      <button onclick="resetAll()" class="text-xs text-slate-400 hover:text-rose-400 flex items-center space-x-1">
-        <i class="fa-solid fa-rotate-left"></i>
-        <span>Limpiar</span>
+      <button onclick="clearAllFiles()" class="text-xs text-slate-400 hover:text-rose-400 flex items-center space-x-1">
+        <i class="fa-solid fa-trash-can"></i>
+        <span>Borrar Todo</span>
       </button>
     </div>
 
-    <!-- SUBIDA ACUMULATIVA DE FOTOS / VIDEOS -->
+    <!-- BOTÓN / ZONA DE CARGA DE ARCHIVOS -->
     <div class="space-y-2">
       <div class="flex items-center justify-between">
-        <label class="block text-xs font-semibold text-slate-300">MULTIMEDIA (SE ACUMULAN AL SELECCIONAR MÁS)</label>
-        <span id="file-count-label" class="text-xs font-bold text-cyan-400">0 Archivos acumulados</span>
+        <label class="block text-xs font-semibold text-slate-300">SUBIR O AÑADIR MÁS IMÁGENES / VIDEOS</label>
+        <span id="global-count-badge" class="text-xs font-bold text-cyan-400">0 Archivos acumulados</span>
       </div>
 
-      <div class="border-2 border-dashed border-slate-800 hover:border-cyan-500/50 rounded-2xl p-5 text-center bg-slate-950/40 transition-all cursor-pointer relative group" onclick="document.getElementById('tiktok-file-input').click()">
-        <input type="file" id="tiktok-file-input" accept="image/*,video/*" multiple onchange="appendFiles(event)" class="hidden">
+      <div class="border-2 border-dashed border-slate-800 hover:border-cyan-500/50 rounded-2xl p-5 text-center bg-slate-950/40 transition-all cursor-pointer relative group" onclick="document.getElementById('file-picker-input').click()">
+        <input type="file" id="file-picker-input" accept="image/*,video/*" multiple onchange="handleFileSelection(event)" class="hidden">
         <div class="space-y-2">
           <div class="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-400 group-hover:text-cyan-400 group-hover:scale-110 transition-all">
             <i class="fa-solid fa-plus text-lg"></i>
           </div>
-          <p class="text-xs font-medium text-slate-300">Haz clic aquí para agregar más imágenes (10 o más) sin borrar las previas</p>
-          <p class="text-[10px] text-slate-500">Soporta JPG, PNG, MP4 para Photo Mode y Video Feed en TikTok</p>
+          <p class="text-xs font-medium text-slate-300">Haz clic aquí para seleccionar imágenes o videos de tus diseños</p>
+          <p class="text-[10px] text-slate-500">Cada selección sumará archivos nuevos a la lista sin reemplazar los que ya tenías</p>
         </div>
       </div>
-
-      <!-- GALERÍA DE MINIATURAS CON BOTÓN X -->
-      <div id="media-thumbs-grid" class="grid grid-cols-5 gap-2.5 mt-3 hidden max-h-48 overflow-y-auto custom-scrollbar p-1"></div>
     </div>
 
-    <!-- PREVISUALIZADOR MOCKUP TIKTOK -->
-    <div id="preview-mockup-box" class="aspect-[9/16] max-h-72 bg-black rounded-2xl border border-slate-800 overflow-hidden relative mx-auto hidden shadow-xl">
-      <div class="w-full h-full flex items-center justify-center relative bg-slate-950">
-        <img id="preview-img-target" class="w-full h-full object-cover hidden" alt="TikTok Preview">
-        <video id="preview-video-target" controls class="w-full h-full object-cover hidden"></video>
+    <!-- SECCIÓN 1: MUESTRA DE ARCHIVOS AGREGADOS (LISTA COMPLETA) -->
+    <div id="added-files-section" class="space-y-3 bg-slate-950 p-4 rounded-xl border border-slate-800 hidden">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs font-bold text-slate-200 flex items-center space-x-2">
+          <i class="fa-solid fa-layer-group text-cyan-400"></i>
+          <span>Listado de Archivos Agregados (Acumulados)</span>
+        </h3>
+        <span class="text-[10px] text-slate-500">Puedes eliminar imágenes individualmente con la X</span>
+      </div>
 
-        <!-- CAROUSEL BADGE EN TIKTOK -->
-        <div id="carousel-badge-tiktok" class="absolute top-3 right-3 bg-black/70 backdrop-blur text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full z-10 border border-white/20 hidden">
-          <i class="fa-solid fa-layer-group text-cyan-400"></i> <span id="carousel-index-display">1/1</span>
+      <!-- GRID DE MINIATURAS ACUMULADAS -->
+      <div id="added-thumbs-container" class="grid grid-cols-4 sm:grid-cols-6 gap-2.5 max-h-40 overflow-y-auto custom-scrollbar p-1"></div>
+    </div>
+
+    <!-- SECCIÓN 2: PREVISUALIZADOR MOCKUP CON CARRUSEL DESLIZABLE (ESTILO TIKTOK) -->
+    <div id="tiktok-mockup-section" class="space-y-2 hidden">
+      <div class="flex items-center justify-between">
+        <label class="block text-xs font-semibold text-slate-400">VISTA PREVIA DESLIZABLE (MOCKUP TIKTOK PHOTO MODE)</label>
+        <span class="text-[10px] text-cyan-400 font-medium">Usa las flechas o desliza horizontalmente ➔</span>
+      </div>
+
+      <div class="aspect-[9/16] max-h-[380px] bg-black rounded-2xl border border-slate-800 overflow-hidden relative mx-auto shadow-2xl group">
+        <!-- CONTENEDOR DESLIZABLE DE IMÁGENES -->
+        <div id="swipe-slider-track" class="w-full h-full flex overflow-x-auto snap-x-mandatory custom-scrollbar relative">
+          <!-- Las diapositivas se inyectan dinámicamente aquí -->
         </div>
 
-        <!-- SUPERPOSICIÓN DE BOTONES LATERALES DE TIKTOK -->
-        <div class="absolute right-2.5 bottom-10 flex flex-col items-center space-y-3 text-white z-10">
+        <!-- INDICADOR DE CANTIDAD DE FOTOS (1/N) -->
+        <div class="absolute top-3 right-3 bg-black/70 backdrop-blur text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full z-20 border border-white/20">
+          <i class="fa-solid fa-layer-group text-cyan-400"></i> <span id="slider-counter-badge">1/1</span>
+        </div>
+
+        <!-- BOTONES DE NAVEGACIÓN IZQUIERDA / DERECHA -->
+        <button onclick="slidePrev()" class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-black text-white text-xs flex items-center justify-center z-20 border border-white/20 backdrop-blur">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button onclick="slideNext()" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-black text-white text-xs flex items-center justify-center z-20 border border-white/20 backdrop-blur">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+        <!-- PUNTOS DE NAVEGACIÓN INFERIORES -->
+        <div id="slider-dots-container" class="absolute bottom-16 left-0 right-0 flex justify-center space-x-1.5 z-20"></div>
+
+        <!-- BOTONES OVERLAY LATERALES DE TIKTOK -->
+        <div class="absolute right-2.5 bottom-12 flex flex-col items-center space-y-3 text-white z-10 pointer-events-none">
           <div class="w-8 h-8 rounded-full bg-slate-800/80 p-0.5 border border-white/20">
             <div class="w-full h-full bg-pink-600 rounded-full flex items-center justify-center font-bold text-[9px]">G</div>
           </div>
@@ -98,162 +138,218 @@
           </div>
         </div>
 
-        <!-- TEXTO SUPERPUESTO INFERIOR DE TIKTOK -->
-        <div class="absolute bottom-2 left-2 right-12 text-white z-10 text-left space-y-0.5 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-2 rounded-xl">
+        <!-- CAPTION SOBREPUESTO INFERIOR -->
+        <div class="absolute bottom-2 left-2 right-12 text-white z-10 text-left space-y-0.5 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-2 rounded-xl pointer-events-none">
           <p class="font-bold text-[11px]">@giograffik <i class="fa-solid fa-circle-check text-cyan-400 text-[9px]"></i></p>
-          <p id="preview-caption-display" class="text-[10px] text-slate-200 line-clamp-2">Tu descripción de TikTok aparecerá aquí...</p>
+          <p id="mockup-caption-text" class="text-[10px] text-slate-200 line-clamp-2">Tu descripción de TikTok aparecerá aquí...</p>
         </div>
       </div>
     </div>
 
     <!-- DESCRIPCIÓN Y HASHTAGS -->
     <div class="space-y-2">
-      <label class="block text-xs font-semibold text-slate-300">DESCRIPCIÓN DE LA PUBLICACIÓN</label>
-      <textarea id="tiktok-caption" rows="3" oninput="updatePreviewCaption()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 custom-scrollbar" placeholder="Escribe el texto para TikTok... #Giograffik #Sublimacion #Bolivia"></textarea>
+      <label class="block text-xs font-semibold text-slate-300">DESCRIPCIÓN DE LA PUBLICACIÓN DE TIKTOK</label>
+      <textarea id="post-caption-input" rows="3" oninput="syncCaptionText()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 custom-scrollbar" placeholder="Escribe el texto para TikTok... #Giograffik #Sublimacion #Bolivia"></textarea>
     </div>
 
-    <!-- CLIENT KEY / TOKENS -->
+    <!-- CLIENT KEY -->
     <div class="space-y-2">
-      <label class="block text-xs font-semibold text-slate-400">TIKTOK CLIENT KEY (CLAVE DE CLIENTE DE TU APP)</label>
+      <label class="block text-xs font-semibold text-slate-400">TIKTOK CLIENT KEY</label>
       <input type="text" id="tiktok-client-key" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs font-mono text-cyan-400 focus:outline-none focus:border-cyan-500" placeholder="Pega tu Client Key de TikTok Developers">
     </div>
 
     <!-- BOTÓN PUBLICAR -->
-    <button onclick="shareToTikTok()" class="w-full py-4 bg-gradient-to-r from-cyan-500 via-teal-500 to-indigo-600 hover:opacity-95 text-white font-bold rounded-xl text-xs shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center space-x-2">
+    <button onclick="shareToTikTokAPI()" class="w-full py-4 bg-gradient-to-r from-cyan-500 via-teal-500 to-indigo-600 hover:opacity-95 text-white font-bold rounded-xl text-xs shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center space-x-2">
       <i class="fa-brands fa-tiktok text-base"></i>
       <span>PUBLICAR EN MI CUENTA DE TIKTOK (@giograffik)</span>
     </button>
   </div>
 
   <script>
-    let accumulatedMediaFiles = [];
-    let currentPreviewIndex = 0;
+    // ARREGLO GLOBAL PERSISTENTE PARA ALMACENAR TODOS LOS ARCHIVOS ACUMULADOS
+    let masterFileList = [];
+    let activeSlideIndex = 0;
 
     window.onload = function() {
       const savedKey = localStorage.getItem('giograffik_tiktok_client_key') || 'aww9t3u0pb42pogd';
       document.getElementById('tiktok-client-key').value = savedKey;
     };
 
-    // ACUMULAR ARCHIVOS SIN REEMPLAZAR NINGUNO
-    function appendFiles(event) {
-      const selectedFiles = Array.from(event.target.files);
-      if (selectedFiles.length > 0) {
-        accumulatedMediaFiles = accumulatedMediaFiles.concat(selectedFiles);
-        renderGallery();
+    // PROCESAR Y ACUMULAR ARCHIVOS (SIN SOBREESCRIBIR NADA)
+    function handleFileSelection(event) {
+      const newlySelectedFiles = Array.from(event.target.files);
+      if (newlySelectedFiles.length > 0) {
+        // Se utiliza .push() para acumular sobre la lista global
+        newlySelectedFiles.forEach(file => {
+          masterFileList.push(file);
+        });
+        
+        // Reset del input para permitir volver a subir el mismo archivo si se desea
+        event.target.value = '';
+        
+        updateUI();
       }
     }
 
-    // ELIMINAR ARCHIVO ESPECÍFICO DE LA LISTA ACUMULADA
-    function removeFile(index) {
-      accumulatedMediaFiles.splice(index, 1);
-      if (currentPreviewIndex >= accumulatedMediaFiles.length) {
-        currentPreviewIndex = Math.max(0, accumulatedMediaFiles.length - 1);
+    // ELIMINAR UN ARCHIVO INDIVIDUAL POR SU ÍNDICE EN LA LISTA
+    function removeSingleFile(indexToRemove) {
+      masterFileList.splice(indexToRemove, 1);
+      if (activeSlideIndex >= masterFileList.length) {
+        activeSlideIndex = Math.max(0, masterFileList.length - 1);
       }
-      renderGallery();
+      updateUI();
     }
 
-    // MOSTRAR GALERÍA DE MINIATURAS
-    function renderGallery() {
-      const grid = document.getElementById('media-thumbs-grid');
-      const countLabel = document.getElementById('file-count-label');
-      const mockupBox = document.getElementById('preview-mockup-box');
+    // VACIAR TODO
+    function clearAllFiles() {
+      masterFileList = [];
+      activeSlideIndex = 0;
+      document.getElementById('post-caption-input').value = '';
+      updateUI();
+      syncCaptionText();
+    }
 
-      countLabel.innerText = `${accumulatedMediaFiles.length} Archivos acumulados`;
+    // ACTUALIZAR INTERFAZ Y RECONSTRUIR EL CARRUSEL
+    function updateUI() {
+      const badge = document.getElementById('global-count-badge');
+      const addedSection = document.getElementById('added-files-section');
+      const mockupSection = document.getElementById('tiktok-mockup-section');
+      const thumbsGrid = document.getElementById('added-thumbs-container');
 
-      if (accumulatedMediaFiles.length === 0) {
-        grid.classList.add('hidden');
-        mockupBox.classList.add('hidden');
+      badge.innerText = `${masterFileList.length} Archivos acumulados`;
+
+      if (masterFileList.length === 0) {
+        addedSection.classList.add('hidden');
+        mockupSection.classList.add('hidden');
         return;
       }
 
-      grid.innerHTML = '';
-      grid.classList.remove('hidden');
-      mockupBox.classList.remove('hidden');
+      addedSection.classList.remove('hidden');
+      mockupSection.classList.remove('hidden');
 
-      accumulatedMediaFiles.forEach((file, idx) => {
+      // 1. Renderizar Miniaturas de la lista de archivos agregados
+      thumbsGrid.innerHTML = '';
+      masterFileList.forEach((file, idx) => {
         const reader = new FileReader();
         reader.onload = function(e) {
           const thumb = document.createElement('div');
-          thumb.className = `relative aspect-square bg-slate-950 rounded-lg overflow-hidden border ${idx === currentPreviewIndex ? 'border-cyan-400 ring-2 ring-cyan-400/50' : 'border-slate-800'} cursor-pointer group`;
-          
-          thumb.onclick = () => {
-            currentPreviewIndex = idx;
-            renderGallery();
-            showPreview(e.target.result, file.type, idx);
-          };
+          thumb.className = `relative aspect-square bg-slate-900 rounded-lg overflow-hidden border ${idx === activeSlideIndex ? 'border-cyan-400 ring-2 ring-cyan-400/50' : 'border-slate-800'} cursor-pointer group`;
+          thumb.onclick = () => scrollToSlide(idx);
 
           thumb.innerHTML = `
             <img src="${e.target.result}" class="w-full h-full object-cover">
-            <span class="absolute top-1 left-1 bg-black/80 text-[9px] text-white px-1.5 rounded font-mono font-bold">${idx + 1}</span>
-            <button onclick="event.stopPropagation(); removeFile(${idx})" class="absolute top-1 right-1 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] flex items-center justify-center opacity-80 hover:opacity-100">
+            <span class="absolute top-1 left-1 bg-black/80 text-[8px] text-white px-1 rounded font-mono font-bold">${idx + 1}</span>
+            <button onclick="event.stopPropagation(); removeSingleFile(${idx})" class="absolute top-1 right-1 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] flex items-center justify-center opacity-80 hover:opacity-100">
               <i class="fa-solid fa-xmark"></i>
             </button>
           `;
-          grid.appendChild(thumb);
+          thumbsGrid.appendChild(thumb);
+        };
+        reader.readAsDataURL(file);
+      });
 
-          if (idx === currentPreviewIndex) {
-            showPreview(e.target.result, file.type, idx);
+      // 2. Reconstruir el carrusel deslizable
+      buildSwipeCarousel();
+    }
+
+    // CONSTRUIR DIAPOSITIVAS DEL CARRUSEL TIKTOK
+    function buildSwipeCarousel() {
+      const sliderTrack = document.getElementById('swipe-slider-track');
+      const dotsContainer = document.getElementById('slider-dots-container');
+      
+      sliderTrack.innerHTML = '';
+      dotsContainer.innerHTML = '';
+
+      masterFileList.forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          // Slide Container
+          const slide = document.createElement('div');
+          slide.className = 'w-full h-full flex-shrink-0 snap-center-item flex items-center justify-center relative bg-slate-950';
+          slide.id = `slide-item-${idx}`;
+
+          if (file.type.startsWith('video/')) {
+            slide.innerHTML = `<video src="${e.target.result}" controls class="w-full h-full object-cover"></video>`;
+          } else {
+            slide.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover" alt="TikTok Photo ${idx + 1}">`;
+          }
+
+          sliderTrack.appendChild(slide);
+
+          // Dot de navegación
+          const dot = document.createElement('div');
+          dot.className = `w-1.5 h-1.5 rounded-full transition-all ${idx === activeSlideIndex ? 'bg-cyan-400 w-3' : 'bg-white/40'}`;
+          dotsContainer.appendChild(dot);
+
+          if (idx === activeSlideIndex) {
+            scrollToSlide(idx);
           }
         };
         reader.readAsDataURL(file);
       });
+
+      document.getElementById('slider-counter-badge').innerText = `${activeSlideIndex + 1}/${masterFileList.length}`;
     }
 
-    // VISTA PREVIA
-    function showPreview(url, fileType, index) {
-      const imgTarget = document.getElementById('preview-img-target');
-      const videoTarget = document.getElementById('preview-video-target');
-      const carouselBadge = document.getElementById('carousel-badge-tiktok');
-      const carouselIndexDisplay = document.getElementById('carousel-index-display');
+    // DESLIZAR A UNA DIAPOSITIVA ESPECÍFICA
+    function scrollToSlide(index) {
+      activeSlideIndex = index;
+      const track = document.getElementById('swipe-slider-track');
+      const targetSlide = document.getElementById(`slide-item-${index}`);
 
-      if (fileType.startsWith('video/')) {
-        imgTarget.classList.add('hidden');
-        videoTarget.src = url;
-        videoTarget.classList.remove('hidden');
-      } else {
-        videoTarget.classList.add('hidden');
-        imgTarget.src = url;
-        imgTarget.classList.remove('hidden');
+      if (targetSlide) {
+        track.scrollTo({
+          left: targetSlide.offsetLeft,
+          behavior: 'smooth'
+        });
       }
 
-      carouselBadge.classList.remove('hidden');
-      carouselIndexDisplay.innerText = `${index + 1}/${accumulatedMediaFiles.length}`;
+      document.getElementById('slider-counter-badge').innerText = `${index + 1}/${masterFileList.length}`;
+      
+      // Actualizar estilo de dots
+      const dots = document.getElementById('slider-dots-container').children;
+      Array.from(dots).forEach((d, i) => {
+        d.className = `w-1.5 h-1.5 rounded-full transition-all ${i === index ? 'bg-cyan-400 w-3' : 'bg-white/40'}`;
+      });
     }
 
-    function updatePreviewCaption() {
-      const text = document.getElementById('tiktok-caption').value.trim();
-      document.getElementById('preview-caption-display').innerText = text || 'Tu descripción de TikTok aparecerá aquí...';
+    function slideNext() {
+      if (masterFileList.length === 0) return;
+      const nextIdx = (activeSlideIndex + 1) % masterFileList.length;
+      scrollToSlide(nextIdx);
     }
 
-    function resetAll() {
-      accumulatedMediaFiles = [];
-      currentPreviewIndex = 0;
-      document.getElementById('tiktok-caption').value = '';
-      document.getElementById('tiktok-file-input').value = '';
-      renderGallery();
-      updatePreviewCaption();
+    function slidePrev() {
+      if (masterFileList.length === 0) return;
+      const prevIdx = (activeSlideIndex - 1 + masterFileList.length) % masterFileList.length;
+      scrollToSlide(prevIdx);
     }
 
-    function shareToTikTok() {
+    function syncCaptionText() {
+      const text = document.getElementById('post-caption-input').value.trim();
+      document.getElementById('mockup-caption-text').innerText = text || 'Tu descripción de TikTok aparecerá aquí...';
+    }
+
+    function shareToTikTokAPI() {
       const clientKey = document.getElementById('tiktok-client-key').value.trim();
-      const caption = document.getElementById('tiktok-caption').value.trim();
+      const caption = document.getElementById('post-caption-input').value.trim();
 
       if (!clientKey) {
         alert("⚠️ Por favor ingresa tu Client Key de TikTok.");
         return;
       }
 
-      if (accumulatedMediaFiles.length === 0) {
-        alert("⚠️ Por favor selecciona al menos una imagen o video.");
+      if (masterFileList.length === 0) {
+        alert("⚠️ Selecciona al menos una imagen o video para publicar.");
         return;
       }
 
       localStorage.setItem('giograffik_tiktok_client_key', clientKey);
 
-      // Flujo oficial de autenticación y transferencia a TikTok API
+      // Redirección oficial a la API de TikTok Content Posting
       const redirectUri = encodeURIComponent(window.location.href);
       const scope = encodeURIComponent('user.info.basic,video.upload,video.publish');
-      const state = encodeURIComponent(caption || 'giograffik_photo_mode');
+      const state = encodeURIComponent(caption || 'giograffik_carousel');
 
       const tiktokAuthUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${clientKey}&response_type=code&scope=${scope}&redirect_uri=${redirectUri}&state=${state}`;
 
