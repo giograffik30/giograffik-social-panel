@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Giograffik TikTok Publisher v5.7</title>
+  <title>Giograffik TikTok Publisher v5.7.1</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
@@ -42,9 +42,9 @@
         <div>
           <div class="flex items-center space-x-2">
             <h1 class="font-bold text-lg text-white">Giograffik <span class="text-cyan-400">TikTok Publisher</span></h1>
-            <span class="text-[10px] bg-cyan-950 text-cyan-400 border border-cyan-800 font-semibold px-2 py-0.5 rounded-full">v5.7 LIVE</span>
+            <span class="text-[10px] bg-cyan-950 text-cyan-400 border border-cyan-800 font-semibold px-2 py-0.5 rounded-full">v5.7.1</span>
           </div>
-          <p class="text-xs text-slate-400">Carrusel Deslizable Sin Límite de Fotos para Sublimación</p>
+          <p class="text-xs text-slate-400">Publicador Multi-Foto & Carrusel Deslizable</p>
         </div>
       </div>
       <button onclick="clearAllFiles()" class="text-xs text-slate-400 hover:text-rose-400 flex items-center space-x-1">
@@ -165,7 +165,7 @@
     let activeSlideIndex = 0;
 
     window.onload = function() {
-      const savedKey = localStorage.getItem('giograffik_tiktok_client_key') || 'aww9t3u0pb42pogd';
+      const savedKey = localStorage.getItem('giograffik_tiktok_client_key') || 'sbaw61iahu7nqqdibe';
       document.getElementById('tiktok-client-key').value = savedKey;
     };
 
@@ -325,8 +325,9 @@
 
       localStorage.setItem('giograffik_tiktok_client_key', clientKey);
 
+      // Solicitud con los ámbitos requeridos por la API de Contenido de TikTok
       const redirectUri = encodeURIComponent("https://giograffik-social-panel.vercel.app");
-      const scope = encodeURIComponent("user.info.basic");
+      const scope = encodeURIComponent("user.info.basic,video.upload,video.publish");
       const state = encodeURIComponent(caption || "giograffik_carousel");
 
       const tiktokAuthUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${clientKey}&response_type=code&scope=${scope}&redirect_uri=${redirectUri}&state=${state}`;
