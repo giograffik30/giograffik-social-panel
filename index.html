@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Giograffik TikTok Publisher v5.6 - Swipe Carousel</title>
+  <title>Giograffik TikTok Publisher v5.7</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
@@ -11,7 +11,6 @@
     .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
     
-    /* Carousel TikTok Scroll Snap */
     .snap-x-mandatory {
       scroll-snap-type: x mandatory;
       scroll-behavior: smooth;
@@ -43,9 +42,9 @@
         <div>
           <div class="flex items-center space-x-2">
             <h1 class="font-bold text-lg text-white">Giograffik <span class="text-cyan-400">TikTok Publisher</span></h1>
-            <span class="text-[10px] bg-cyan-950 text-cyan-400 border border-cyan-800 font-semibold px-2 py-0.5 rounded-full">v5.6</span>
+            <span class="text-[10px] bg-cyan-950 text-cyan-400 border border-cyan-800 font-semibold px-2 py-0.5 rounded-full">v5.7 LIVE</span>
           </div>
-          <p class="text-xs text-slate-400">Acumulador de Fotos & Vista Previa Deslizable (Swipe)</p>
+          <p class="text-xs text-slate-400">Carrusel Deslizable Sin Límite de Fotos para Sublimación</p>
         </div>
       </div>
       <button onclick="clearAllFiles()" class="text-xs text-slate-400 hover:text-rose-400 flex items-center space-x-1">
@@ -54,7 +53,7 @@
       </button>
     </div>
 
-    <!-- BOTÓN / ZONA DE CARGA DE ARCHIVOS -->
+    <!-- ZONA DE CARGA DE ARCHIVOS -->
     <div class="space-y-2">
       <div class="flex items-center justify-between">
         <label class="block text-xs font-semibold text-slate-300">SUBIR O AÑADIR MÁS IMÁGENES / VIDEOS</label>
@@ -68,44 +67,40 @@
             <i class="fa-solid fa-plus text-lg"></i>
           </div>
           <p class="text-xs font-medium text-slate-300">Haz clic aquí para seleccionar imágenes o videos de tus diseños</p>
-          <p class="text-[10px] text-slate-500">Cada selección sumará archivos nuevos a la lista sin reemplazar los que ya tenías</p>
+          <p class="text-[10px] text-slate-500">Cada selección suma nuevos archivos sin borrar ni reemplazar los anteriores[cite: 8]</p>
         </div>
       </div>
     </div>
 
-    <!-- SECCIÓN 1: MUESTRA DE ARCHIVOS AGREGADOS (LISTA COMPLETA) -->
+    <!-- SECCIÓN 1: LISTADO DE ARCHIVOS AGREGADOS -->
     <div id="added-files-section" class="space-y-3 bg-slate-950 p-4 rounded-xl border border-slate-800 hidden">
       <div class="flex items-center justify-between">
         <h3 class="text-xs font-bold text-slate-200 flex items-center space-x-2">
           <i class="fa-solid fa-layer-group text-cyan-400"></i>
           <span>Listado de Archivos Agregados (Acumulados)</span>
         </h3>
-        <span class="text-[10px] text-slate-500">Puedes eliminar imágenes individualmente con la X</span>
+        <span class="text-[10px] text-slate-500">Elimina imágenes con la X individual</span>
       </div>
-
-      <!-- GRID DE MINIATURAS ACUMULADAS -->
       <div id="added-thumbs-container" class="grid grid-cols-4 sm:grid-cols-6 gap-2.5 max-h-40 overflow-y-auto custom-scrollbar p-1"></div>
     </div>
 
-    <!-- SECCIÓN 2: PREVISUALIZADOR MOCKUP CON CARRUSEL DESLIZABLE (ESTILO TIKTOK) -->
+    <!-- SECCIÓN 2: VISTA PREVIA DESLIZABLE (ESTILO TIKTOK) -->
     <div id="tiktok-mockup-section" class="space-y-2 hidden">
       <div class="flex items-center justify-between">
-        <label class="block text-xs font-semibold text-slate-400">VISTA PREVIA DESLIZABLE (MOCKUP TIKTOK PHOTO MODE)</label>
+        <label class="block text-xs font-semibold text-slate-400">VISTA PREVIA DESLIZABLE (CARRUSEL TIKTOK)</label>
         <span class="text-[10px] text-cyan-400 font-medium">Usa las flechas o desliza horizontalmente ➔</span>
       </div>
 
       <div class="aspect-[9/16] max-h-[380px] bg-black rounded-2xl border border-slate-800 overflow-hidden relative mx-auto shadow-2xl group">
-        <!-- CONTENEDOR DESLIZABLE DE IMÁGENES -->
-        <div id="swipe-slider-track" class="w-full h-full flex overflow-x-auto snap-x-mandatory custom-scrollbar relative">
-          <!-- Las diapositivas se inyectan dinámicamente aquí -->
-        </div>
+        <!-- CARRUSEL TRACK -->
+        <div id="swipe-slider-track" class="w-full h-full flex overflow-x-auto snap-x-mandatory custom-scrollbar relative"></div>
 
-        <!-- INDICADOR DE CANTIDAD DE FOTOS (1/N) -->
+        <!-- CONTADOR 1/N -->
         <div class="absolute top-3 right-3 bg-black/70 backdrop-blur text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full z-20 border border-white/20">
           <i class="fa-solid fa-layer-group text-cyan-400"></i> <span id="slider-counter-badge">1/1</span>
         </div>
 
-        <!-- BOTONES DE NAVEGACIÓN IZQUIERDA / DERECHA -->
+        <!-- BOTONES FLECHAS -->
         <button onclick="slidePrev()" class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-black text-white text-xs flex items-center justify-center z-20 border border-white/20 backdrop-blur">
           <i class="fa-solid fa-chevron-left"></i>
         </button>
@@ -113,10 +108,10 @@
           <i class="fa-solid fa-chevron-right"></i>
         </button>
 
-        <!-- PUNTOS DE NAVEGACIÓN INFERIORES -->
+        <!-- PUNTOS INFERIORES -->
         <div id="slider-dots-container" class="absolute bottom-16 left-0 right-0 flex justify-center space-x-1.5 z-20"></div>
 
-        <!-- BOTONES OVERLAY LATERALES DE TIKTOK -->
+        <!-- OVERLAYS TIKTOK -->
         <div class="absolute right-2.5 bottom-12 flex flex-col items-center space-y-3 text-white z-10 pointer-events-none">
           <div class="w-8 h-8 rounded-full bg-slate-800/80 p-0.5 border border-white/20">
             <div class="w-full h-full bg-pink-600 rounded-full flex items-center justify-center font-bold text-[9px]">G</div>
@@ -138,7 +133,7 @@
           </div>
         </div>
 
-        <!-- CAPTION SOBREPUESTO INFERIOR -->
+        <!-- CAPTION -->
         <div class="absolute bottom-2 left-2 right-12 text-white z-10 text-left space-y-0.5 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-2 rounded-xl pointer-events-none">
           <p class="font-bold text-[11px]">@giograffik <i class="fa-solid fa-circle-check text-cyan-400 text-[9px]"></i></p>
           <p id="mockup-caption-text" class="text-[10px] text-slate-200 line-clamp-2">Tu descripción de TikTok aparecerá aquí...</p>
@@ -166,7 +161,6 @@
   </div>
 
   <script>
-    // ARREGLO GLOBAL PERSISTENTE PARA ALMACENAR TODOS LOS ARCHIVOS ACUMULADOS
     let masterFileList = [];
     let activeSlideIndex = 0;
 
@@ -175,23 +169,17 @@
       document.getElementById('tiktok-client-key').value = savedKey;
     };
 
-    // PROCESAR Y ACUMULAR ARCHIVOS (SIN SOBREESCRIBIR NADA)
     function handleFileSelection(event) {
       const newlySelectedFiles = Array.from(event.target.files);
       if (newlySelectedFiles.length > 0) {
-        // Se utiliza .push() para acumular sobre la lista global
         newlySelectedFiles.forEach(file => {
           masterFileList.push(file);
         });
-        
-        // Reset del input para permitir volver a subir el mismo archivo si se desea
         event.target.value = '';
-        
         updateUI();
       }
     }
 
-    // ELIMINAR UN ARCHIVO INDIVIDUAL POR SU ÍNDICE EN LA LISTA
     function removeSingleFile(indexToRemove) {
       masterFileList.splice(indexToRemove, 1);
       if (activeSlideIndex >= masterFileList.length) {
@@ -200,7 +188,6 @@
       updateUI();
     }
 
-    // VACIAR TODO
     function clearAllFiles() {
       masterFileList = [];
       activeSlideIndex = 0;
@@ -209,7 +196,6 @@
       syncCaptionText();
     }
 
-    // ACTUALIZAR INTERFAZ Y RECONSTRUIR EL CARRUSEL
     function updateUI() {
       const badge = document.getElementById('global-count-badge');
       const addedSection = document.getElementById('added-files-section');
@@ -227,7 +213,6 @@
       addedSection.classList.remove('hidden');
       mockupSection.classList.remove('hidden');
 
-      // 1. Renderizar Miniaturas de la lista de archivos agregados
       thumbsGrid.innerHTML = '';
       masterFileList.forEach((file, idx) => {
         const reader = new FileReader();
@@ -248,11 +233,9 @@
         reader.readAsDataURL(file);
       });
 
-      // 2. Reconstruir el carrusel deslizable
       buildSwipeCarousel();
     }
 
-    // CONSTRUIR DIAPOSITIVAS DEL CARRUSEL TIKTOK
     function buildSwipeCarousel() {
       const sliderTrack = document.getElementById('swipe-slider-track');
       const dotsContainer = document.getElementById('slider-dots-container');
@@ -263,7 +246,6 @@
       masterFileList.forEach((file, idx) => {
         const reader = new FileReader();
         reader.onload = function(e) {
-          // Slide Container
           const slide = document.createElement('div');
           slide.className = 'w-full h-full flex-shrink-0 snap-center-item flex items-center justify-center relative bg-slate-950';
           slide.id = `slide-item-${idx}`;
@@ -276,7 +258,6 @@
 
           sliderTrack.appendChild(slide);
 
-          // Dot de navegación
           const dot = document.createElement('div');
           dot.className = `w-1.5 h-1.5 rounded-full transition-all ${idx === activeSlideIndex ? 'bg-cyan-400 w-3' : 'bg-white/40'}`;
           dotsContainer.appendChild(dot);
@@ -291,7 +272,6 @@
       document.getElementById('slider-counter-badge').innerText = `${activeSlideIndex + 1}/${masterFileList.length}`;
     }
 
-    // DESLIZAR A UNA DIAPOSITIVA ESPECÍFICA
     function scrollToSlide(index) {
       activeSlideIndex = index;
       const track = document.getElementById('swipe-slider-track');
@@ -306,7 +286,6 @@
 
       document.getElementById('slider-counter-badge').innerText = `${index + 1}/${masterFileList.length}`;
       
-      // Actualizar estilo de dots
       const dots = document.getElementById('slider-dots-container').children;
       Array.from(dots).forEach((d, i) => {
         d.className = `w-1.5 h-1.5 rounded-full transition-all ${i === index ? 'bg-cyan-400 w-3' : 'bg-white/40'}`;
@@ -346,10 +325,9 @@
 
       localStorage.setItem('giograffik_tiktok_client_key', clientKey);
 
-      // Redirección oficial a la API de TikTok Content Posting
-      const redirectUri = encodeURIComponent(window.location.href);
-      const scope = encodeURIComponent('user.info.basic,video.upload,video.publish');
-      const state = encodeURIComponent(caption || 'giograffik_carousel');
+      const redirectUri = encodeURIComponent("https://giograffik-social-panel.vercel.app");
+      const scope = encodeURIComponent("user.info.basic");
+      const state = encodeURIComponent(caption || "giograffik_carousel");
 
       const tiktokAuthUrl = `https://www.tiktok.com/v2/auth/authorize/?client_key=${clientKey}&response_type=code&scope=${scope}&redirect_uri=${redirectUri}&state=${state}`;
 
