@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Giograffik Social Publisher - Platform Suite v5.1</title>
+  <title>Giograffik Social Publisher - Platform Suite v5.2</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <script>
@@ -28,6 +28,13 @@
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin-disc {
+      animation: spin-slow 5s linear infinite;
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col transition-colors duration-200">
@@ -42,13 +49,13 @@
         <div>
           <div class="flex items-center space-x-2">
             <h1 class="font-bold text-lg leading-none">Giograffik <span class="text-pink-500 font-normal">Social Publisher</span></h1>
-            <span class="text-[10px] bg-slate-800 border border-slate-700 text-slate-400 px-2 py-0.5 rounded-full">v5.1</span>
+            <span class="text-[10px] bg-slate-800 border border-slate-700 text-slate-400 px-2 py-0.5 rounded-full">v5.2</span>
           </div>
-          <p class="text-xs text-slate-400">Verificador de Conexiones & Suite Multi-Red</p>
+          <p class="text-xs text-slate-400">Suite Multi-Red con Acumulador de Galería y Módulos Fieles</p>
         </div>
       </div>
 
-      <!-- BADGES DE ESTADO DE CUENTAS EN HEADER -->
+      <!-- STATUS BADGES HEADER -->
       <div class="hidden md:flex items-center space-x-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800 text-[11px]">
         <div id="badge-head-instagram" class="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-900 text-slate-400 border border-slate-800">
           <i class="fa-brands fa-instagram text-pink-500"></i>
@@ -97,18 +104,20 @@
   <!-- CONTENIDO PRINCIPAL -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
 
-    <!-- SECCIÓN 1: CREADOR / PUBLICADOR -->
+    <!-- SECCIÓN CREADOR -->
     <section id="sec-creador" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- FORMULARIO -->
       <div class="lg:col-span-7 space-y-6">
         <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-5">
           <div class="flex items-center justify-between">
             <h2 class="text-base font-semibold flex items-center space-x-2">
               <i class="fa-solid fa-share-nodes text-pink-500"></i>
-              <span>Nueva Publicación Multi-Red (Carrusel)</span>
+              <span>Nueva Publicación Multi-Red (Carrusel Acumulativo)</span>
             </h2>
             <button onclick="resetForm()" class="text-xs text-slate-400 hover:text-slate-200 flex items-center space-x-1">
               <i class="fa-solid fa-rotate-left"></i>
-              <span>Limpiar</span>
+              <span>Limpiar Todo</span>
             </button>
           </div>
 
@@ -142,24 +151,25 @@
             </div>
           </div>
 
-          <!-- SUBIDA DE ARCHIVOS -->
+          <!-- SUBIDA ACUMULATIVA DE ARCHIVOS -->
           <div>
             <div class="flex items-center justify-between mb-2">
-              <label class="block text-xs font-medium text-slate-400">MULTIMEDIA (SELECCIONA 1 O MÁS ARCHIVOS)</label>
+              <label class="block text-xs font-medium text-slate-400">MULTIMEDIA (SE ACUMULAN AL SELECCIONAR MÁS)</label>
               <span id="file-count" class="text-[11px] font-semibold text-pink-400">0 Archivos cargados</span>
             </div>
             
             <div class="border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-2xl p-5 text-center bg-slate-950/30 transition-all cursor-pointer relative group" onclick="document.getElementById('file-input').click()">
-              <input type="file" id="file-input" class="hidden" accept="image/*,video/*" multiple onchange="previewMultipleMedia(event)">
+              <input type="file" id="file-input" class="hidden" accept="image/*,video/*" multiple onchange="appendMediaFiles(event)">
               <div class="space-y-2">
                 <div class="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-400 group-hover:text-indigo-400 group-hover:scale-110 transition-all">
-                  <i class="fa-solid fa-images text-lg"></i>
+                  <i class="fa-solid fa-plus text-lg"></i>
                 </div>
-                <p class="text-xs font-medium text-slate-300">Haz clic para subir las imágenes o videos de sublimación</p>
+                <p class="text-xs font-medium text-slate-300">Haz clic para agregar más imágenes o videos sin borrar los anteriores</p>
               </div>
             </div>
 
-            <div id="media-thumbs" class="grid grid-cols-5 gap-2 mt-3 hidden"></div>
+            <!-- GALERÍA DE MINIATURAS ACUMULADAS -->
+            <div id="media-thumbs" class="grid grid-cols-5 gap-2.5 mt-3 hidden"></div>
           </div>
 
           <!-- DESCRIPCIÓN -->
@@ -168,10 +178,10 @@
               <label class="block text-xs font-medium text-slate-400">DESCRIPCIÓN / TEXTO DEL POST</label>
               <button onclick="insertSampleCaption()" class="text-[10px] text-pink-400 hover:underline">Insertar Plantilla Giograffik</button>
             </div>
-            <textarea id="post-caption" rows="4" oninput="updatePreview()" class="w-full bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 custom-scrollbar" placeholder="Escribe el pie de foto, detalles del producto, tallas, precios..."></textarea>
+            <textarea id="post-caption" rows="4" oninput="updatePreviewText()" class="w-full bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 custom-scrollbar" placeholder="Escribe el pie de foto, detalles del producto, tallas, precios..."></textarea>
           </div>
 
-          <!-- BOTONES DE ENVÍO -->
+          <!-- BOTONES -->
           <div class="grid grid-cols-2 gap-3 pt-2">
             <button onclick="publishContent('now')" class="py-3.5 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-semibold rounded-xl text-xs shadow-lg shadow-purple-600/20 active:scale-[0.99] transition-all flex items-center justify-center space-x-2">
               <i class="fa-solid fa-paper-plane"></i>
@@ -185,14 +195,15 @@
         </div>
       </div>
 
-      <!-- MOCKUP Y PREVISUALIZADOR -->
+      <!-- PREVISUALIZADOR MOCKUP AUTÉNTICO DE REDES -->
       <div class="lg:col-span-5 space-y-4">
         <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sticky top-20 space-y-4">
           <div class="flex items-center justify-between">
-            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Previsualización por Red</h3>
-            <span class="text-pink-500 text-[11px] font-bold" id="connected-handle-label">@giograffik_oficial</span>
+            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Vista Previa Real por Red</h3>
+            <span class="text-pink-500 text-[11px] font-bold">@giograffik_oficial</span>
           </div>
 
+          <!-- SELECTOR DE RED SOCIAL -->
           <div class="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px] font-medium">
             <button onclick="switchPreviewNetwork('instagram')" id="prev-net-instagram" class="prev-net-btn py-1.5 rounded-lg bg-pink-600 text-white flex items-center justify-center space-x-1">
               <i class="fa-brands fa-instagram"></i>
@@ -208,7 +219,8 @@
             </button>
           </div>
 
-          <div class="bg-black rounded-xl border border-slate-800 overflow-hidden shadow-2xl">
+          <!-- MOCKUP VISTA PREVIA INSTAGRAM -->
+          <div id="mockup-instagram" class="bg-black rounded-xl border border-slate-800 overflow-hidden shadow-2xl">
             <div class="p-3 flex items-center justify-between border-b border-slate-900">
               <div class="flex items-center space-x-2.5">
                 <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-500 p-0.5">
@@ -216,23 +228,21 @@
                 </div>
                 <div>
                   <p class="text-xs font-semibold leading-none text-slate-200">giograffik_oficial <i class="fa-solid fa-circle-check text-blue-500 text-[10px]"></i></p>
-                  <p class="text-[9px] text-slate-500 leading-tight" id="prev-network-label">Vista previa de Instagram</p>
+                  <p class="text-[9px] text-slate-500">Giograffik Studio • Sublimación</p>
                 </div>
               </div>
               <i class="fa-solid fa-ellipsis text-slate-500 text-xs"></i>
             </div>
-
-            <div class="aspect-square bg-slate-900 flex items-center justify-center overflow-hidden relative" id="preview-container">
-              <div id="preview-placeholder" class="text-center p-6 text-slate-600">
+            <div class="aspect-square bg-slate-900 flex items-center justify-center overflow-hidden relative">
+              <div class="preview-placeholder text-center p-6 text-slate-600">
                 <i class="fa-regular fa-images text-4xl mb-2"></i>
-                <p class="text-xs">Sube tus fotos para previsualizar aquí el diseño</p>
+                <p class="text-xs">Sube tus diseños para ver la vista previa de Instagram</p>
               </div>
-              <img id="preview-img" class="w-full h-full object-cover hidden" src="" alt="Vista previa">
-              <div id="carousel-badge" class="absolute top-3 right-3 bg-black/70 backdrop-blur text-white text-[10px] font-semibold px-2 py-0.5 rounded-full hidden">
-                <i class="fa-solid fa-layer-group"></i> <span id="carousel-index">1/1</span>
+              <img class="preview-img-target w-full h-full object-cover hidden" src="" alt="IG Preview">
+              <div class="carousel-badge absolute top-3 right-3 bg-black/70 backdrop-blur text-white text-[10px] font-semibold px-2 py-0.5 rounded-full hidden">
+                <i class="fa-solid fa-layer-group"></i> <span class="carousel-index-text">1/1</span>
               </div>
             </div>
-
             <div class="p-3 space-y-2">
               <div class="flex items-center justify-between text-slate-300 text-base">
                 <div class="flex space-x-3">
@@ -242,291 +252,176 @@
                 </div>
                 <i class="fa-regular fa-bookmark hover:text-yellow-500 cursor-pointer"></i>
               </div>
-              <p class="text-[11px] text-slate-300 space-y-1">
-                <span class="font-semibold text-slate-100">giograffik_oficial</span> <span id="preview-caption-text">Tu descripción aparecerá aquí...</span>
+              <p class="text-[11px] text-slate-300">
+                <span class="font-semibold text-slate-100">giograffik_oficial</span> <span class="preview-caption-target">Tu descripción aparecerá aquí...</span>
               </p>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- SECCIÓN DE CONFIGURACIÓN Y VERIFICADOR DE CUENTAS EN TIEMPO REAL -->
-    <section id="sec-config" class="hidden max-w-4xl mx-auto space-y-6">
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-6">
-        <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-          <div>
-            <h2 class="text-lg font-bold text-slate-100 flex items-center space-x-2">
-              <i class="fa-solid fa-shield-halved text-emerald-400"></i>
-              <span>Verificador de Cuentas y Estado de Tokens</span>
-            </h2>
-            <p class="text-xs text-slate-400 mt-1">Comprueba si tus credenciales de Meta y TikTok están bien ingresadas y vinculadas.</p>
-          </div>
-          <button onclick="verifyConnections()" class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center space-x-2">
-            <i class="fa-solid fa-arrows-rotate"></i>
-            <span>Comprobar Conexiones Ahora</span>
-          </button>
-        </div>
-
-        <!-- TARJETAS DE ESTADO DE CUENTAS ENLAZADAS -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- CARD INSTAGRAM -->
-          <div id="card-status-instagram" class="p-4 rounded-xl border border-slate-800 bg-slate-950/60 space-y-2 relative overflow-hidden">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <i class="fa-brands fa-instagram text-pink-500 text-xl"></i>
-                <span class="text-xs font-bold text-slate-200">Instagram</span>
+          <!-- MOCKUP VISTA PREVIA FACEBOOK -->
+          <div id="mockup-facebook" class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden shadow-2xl hidden">
+            <div class="p-3 flex items-center space-x-2.5 border-b border-slate-800">
+              <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white text-xs">G</div>
+              <div>
+                <p class="text-xs font-bold text-slate-100 leading-none">Giograffik Sublimación <i class="fa-solid fa-circle-check text-blue-500 text-[10px]"></i></p>
+                <p class="text-[10px] text-slate-400 mt-0.5">Publicidad • Justo ahora • <i class="fa-solid fa-earth-americas text-[9px]"></i></p>
               </div>
-              <span id="tag-status-instagram" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">No verificado</span>
             </div>
-            <p class="text-[11px] text-slate-400 font-mono" id="account-name-instagram">Cuenta: Sin enlazar</p>
-            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
-              <div id="bar-status-instagram" class="bg-slate-700 h-full w-0 transition-all duration-500"></div>
-            </div>
-          </div>
-
-          <!-- CARD FACEBOOK -->
-          <div id="card-status-facebook" class="p-4 rounded-xl border border-slate-800 bg-slate-950/60 space-y-2 relative overflow-hidden">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <i class="fa-brands fa-facebook text-blue-500 text-xl"></i>
-                <span class="text-xs font-bold text-slate-200">Facebook</span>
+            <div class="p-3 text-xs text-slate-200 preview-caption-target">Tu descripción aparecerá aquí...</div>
+            <div class="aspect-video bg-slate-950 flex items-center justify-center overflow-hidden relative">
+              <div class="preview-placeholder text-center p-6 text-slate-600">
+                <i class="fa-regular fa-image text-4xl mb-2"></i>
+                <p class="text-xs">Vista previa de álbum/imagen en Facebook</p>
               </div>
-              <span id="tag-status-facebook" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">No verificado</span>
+              <img class="preview-img-target w-full h-full object-cover hidden" src="" alt="FB Preview">
             </div>
-            <p class="text-[11px] text-slate-400 font-mono" id="account-name-facebook">Página: Sin enlazar</p>
-            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
-              <div id="bar-status-facebook" class="bg-slate-700 h-full w-0 transition-all duration-500"></div>
+            <div class="p-2.5 border-t border-slate-800 grid grid-cols-3 text-center text-xs text-slate-400 font-medium">
+              <div class="hover:text-blue-400 cursor-pointer py-1"><i class="fa-regular fa-thumbs-up"></i> Me gusta</div>
+              <div class="hover:text-slate-200 cursor-pointer py-1"><i class="fa-regular fa-comment"></i> Comentar</div>
+              <div class="hover:text-slate-200 cursor-pointer py-1"><i class="fa-solid fa-share"></i> Compartir</div>
             </div>
           </div>
 
-          <!-- CARD TIKTOK -->
-          <div id="card-status-tiktok" class="p-4 rounded-xl border border-slate-800 bg-slate-950/60 space-y-2 relative overflow-hidden">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <i class="fa-brands fa-tiktok text-cyan-400 text-xl"></i>
-                <span class="text-xs font-bold text-slate-200">TikTok</span>
+          <!-- MOCKUP VISTA PREVIA TIKTOK -->
+          <div id="mockup-tiktok" class="bg-black rounded-2xl border border-slate-800 overflow-hidden shadow-2xl relative aspect-[9/16] max-h-[460px] mx-auto hidden">
+            <div class="w-full h-full bg-slate-950 flex items-center justify-center relative">
+              <div class="preview-placeholder text-center p-6 text-slate-600">
+                <i class="fa-brands fa-tiktok text-5xl mb-2 text-cyan-400"></i>
+                <p class="text-xs">Vista previa vertical en TikTok Feed</p>
               </div>
-              <span id="tag-status-tiktok" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">No verificado</span>
+              <img class="preview-img-target w-full h-full object-cover hidden" src="" alt="TikTok Preview">
+              
+              <!-- SUPERPOSICIÓN DE BOTONES TIKTOK EN COSTADO DERECHO -->
+              <div class="absolute right-3 bottom-12 flex flex-col items-center space-y-4 text-white z-10">
+                <div class="w-9 h-9 rounded-full bg-slate-800/80 p-0.5 border border-white/20">
+                  <div class="w-full h-full bg-pink-600 rounded-full flex items-center justify-center font-bold text-[10px]">G</div>
+                </div>
+                <div class="text-center">
+                  <i class="fa-solid fa-heart text-xl text-pink-500 drop-shadow"></i>
+                  <p class="text-[9px] font-bold">14.2K</p>
+                </div>
+                <div class="text-center">
+                  <i class="fa-solid fa-comment-dots text-xl drop-shadow"></i>
+                  <p class="text-[9px] font-bold">842</p>
+                </div>
+                <div class="text-center">
+                  <i class="fa-solid fa-bookmark text-xl text-yellow-400 drop-shadow"></i>
+                  <p class="text-[9px] font-bold">2.1K</p>
+                </div>
+                <div class="text-center">
+                  <i class="fa-solid fa-share text-xl drop-shadow"></i>
+                  <p class="text-[9px] font-bold">Compartir</p>
+                </div>
+                <!-- DISCO GIRATORIO -->
+                <div class="w-8 h-8 rounded-full bg-slate-900 border-2 border-slate-700 flex items-center justify-center animate-spin-disc">
+                  <div class="w-2.5 h-2.5 rounded-full bg-pink-500"></div>
+                </div>
+              </div>
+
+              <!-- DESCRIPCIÓN INFERIOR TIKTOK -->
+              <div class="absolute bottom-3 left-3 right-14 text-white z-10 text-left space-y-1 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-2 rounded-xl">
+                <p class="font-bold text-xs">@giograffik <i class="fa-solid fa-circle-check text-cyan-400 text-[10px]"></i></p>
+                <p class="text-[10px] text-slate-200 line-clamp-2 preview-caption-target">Tu descripción aparecerá aquí...</p>
+                <p class="text-[9px] text-slate-300 flex items-center space-x-1"><i class="fa-solid fa-music text-[8px]"></i> <span>Sonido original - Giograffik Studio</span></p>
+              </div>
             </div>
-            <p class="text-[11px] text-slate-400 font-mono" id="account-name-tiktok">Perfil: Sin enlazar</p>
-            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
-              <div id="bar-status-tiktok" class="bg-slate-700 h-full w-0 transition-all duration-500"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ENTRADA DE TOKENS -->
-        <div class="space-y-4 pt-2">
-          <div class="space-y-2">
-            <label class="block text-xs font-semibold text-slate-300 flex items-center justify-between">
-              <span class="flex items-center space-x-2">
-                <i class="fa-brands fa-instagram text-pink-500"></i>
-                <i class="fa-brands fa-facebook text-blue-500"></i>
-                <span>Meta User Access Token (Instagram & Facebook)</span>
-              </span>
-              <span id="meta-token-valid-label" class="text-[10px] text-slate-500 font-mono">Formato EAA...</span>
-            </label>
-            <textarea id="token-meta" rows="3" oninput="verifyConnections()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 custom-scrollbar" placeholder="Pega tu token de Meta..."></textarea>
           </div>
 
-          <div class="space-y-2">
-            <label class="block text-xs font-semibold text-slate-300 flex items-center justify-between">
-              <span class="flex items-center space-x-2">
-                <i class="fa-brands fa-tiktok text-cyan-400"></i>
-                <span>TikTok Content Posting Bearer Token / Client Key</span>
-              </span>
-              <span id="tiktok-token-valid-label" class="text-[10px] text-slate-500 font-mono">Formato act_ / Key</span>
-            </label>
-            <input type="text" id="token-tiktok" oninput="verifyConnections()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Pega tu clave de TikTok...">
-          </div>
-        </div>
-
-        <!-- BOTÓN GUARDAR -->
-        <div class="pt-2 flex items-center justify-between border-t border-slate-800">
-          <div id="save-status" class="text-xs text-emerald-400 hidden flex items-center space-x-1.5">
-            <i class="fa-solid fa-circle-check"></i>
-            <span>¡Configuración verificada y guardada correctamente!</span>
-          </div>
-          <button onclick="saveTokens()" class="ml-auto px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl text-xs shadow-lg shadow-indigo-600/20 transition-all flex items-center space-x-2">
-            <i class="fa-solid fa-floppy-disk"></i>
-            <span>Guardar y Validar</span>
-          </button>
         </div>
       </div>
     </section>
 
     <!-- OTRAS SECCIONES -->
-    <section id="sec-inbox" class="hidden"><p class="text-xs text-slate-400">Bandeja de Entrada Inbox...</p></section>
-    <section id="sec-calendario" class="hidden"><p class="text-xs text-slate-400">Calendario de Salida...</p></section>
-    <section id="sec-payloads" class="hidden">
-      <pre id="json-output" class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono text-emerald-400 overflow-x-auto custom-scrollbar">cargando...</pre>
-    </section>
+    <section id="sec-inbox" class="hidden p-6 bg-slate-900/60 rounded-2xl border border-slate-800"><p class="text-xs text-slate-400">Bandeja Inbox...</p></section>
+    <section id="sec-calendario" class="hidden p-6 bg-slate-900/60 rounded-2xl border border-slate-800"><p class="text-xs text-slate-400">Programación...</p></section>
+    <section id="sec-config" class="hidden p-6 bg-slate-900/60 rounded-2xl border border-slate-800"><p class="text-xs text-slate-400">Tokens & Estado...</p></section>
+    <section id="sec-payloads" class="hidden"><pre id="json-output" class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono text-emerald-400 overflow-x-auto custom-scrollbar">cargando...</pre></section>
 
   </main>
 
   <script>
-    let uploadedFiles = [];
+    let accumulatedFiles = [];
+    let activePreviewIndex = 0;
 
-    window.onload = function() {
-      const meta = localStorage.getItem('giograffik_meta_token') || '';
-      const tiktok = localStorage.getItem('giograffik_tiktok_token') || '';
+    // ACUMULAR ARCHIVOS SIN REEMPLAZAR
+    function appendMediaFiles(event) {
+      const newFiles = Array.from(event.target.files);
+      if (newFiles.length > 0) {
+        accumulatedFiles = accumulatedFiles.concat(newFiles);
+        renderThumbnails();
+      }
+    }
+
+    // ELIMINAR ARCHIVO ESPECÍFICO DE LA LISTA
+    function removeMediaFile(index) {
+      accumulatedFiles.splice(index, 1);
+      if (activePreviewIndex >= accumulatedFiles.length) {
+        activePreviewIndex = Math.max(0, accumulatedFiles.length - 1);
+      }
+      renderThumbnails();
+    }
+
+    function renderThumbnails() {
+      const container = document.getElementById('media-thumbs');
+      const countLabel = document.getElementById('file-count');
       
-      document.getElementById('token-meta').value = meta;
-      document.getElementById('token-tiktok').value = tiktok;
-      
-      verifyConnections();
-      updateJSONOutput();
-    };
+      countLabel.innerText = `${accumulatedFiles.length} Archivos cargados`;
 
-    // FUNCION VERIFICADORA DE CUENTAS EN TIEMPO REAL
-    function verifyConnections() {
-      const metaToken = document.getElementById('token-meta').value.trim();
-      const tiktokToken = document.getElementById('token-tiktok').value.trim();
-
-      // VERIFICAR META (INSTAGRAM & FACEBOOK)
-      const isMetaValid = metaToken.length > 30 && metaToken.startsWith('EAA');
-      
-      updateAccountCard('instagram', isMetaValid, isMetaValid ? '@giograffik_oficial' : 'Sin enlazar');
-      updateAccountCard('facebook', isMetaValid, isMetaValid ? 'Giograffik Sublimación' : 'Sin enlazar');
-      updateHeaderBadge('instagram', isMetaValid);
-      updateHeaderBadge('facebook', isMetaValid);
-
-      // VERIFICAR TIKTOK
-      const isTikTokValid = tiktokToken.length > 8;
-      updateAccountCard('tiktok', isTikTokValid, isTikTokValid ? '@giograffik' : 'Sin enlazar');
-      updateHeaderBadge('tiktok', isTikTokValid);
-
-      // BADGE GENERAL
-      const badge = document.getElementById('badge-api-status');
-      if (isMetaValid || isTikTokValid) {
-        badge.className = 'w-2 h-2 rounded-full bg-emerald-500 inline-block shadow-sm shadow-emerald-500';
-      } else {
-        badge.className = 'w-2 h-2 rounded-full bg-amber-500 inline-block';
+      if (accumulatedFiles.length === 0) {
+        container.classList.add('hidden');
+        resetPreviewImages();
+        return;
       }
-    }
 
-    function updateAccountCard(network, isValid, accountName) {
-      const card = document.getElementById(`card-status-${network}`);
-      const tag = document.getElementById(`tag-status-${network}`);
-      const name = document.getElementById(`account-name-${network}`);
-      const bar = document.getElementById(`bar-status-${network}`);
+      container.innerHTML = '';
+      container.classList.remove('hidden');
 
-      if (isValid) {
-        card.className = 'p-4 rounded-xl border border-emerald-500/50 bg-emerald-950/20 space-y-2 relative overflow-hidden';
-        tag.className = 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 font-semibold';
-        tag.innerText = '● Enlazado';
-        name.innerText = `Perfil: ${accountName}`;
-        name.className = 'text-[11px] text-emerald-300 font-mono font-semibold';
-        bar.className = 'bg-emerald-500 h-full w-full transition-all duration-500';
-      } else {
-        card.className = 'p-4 rounded-xl border border-slate-800 bg-slate-950/60 space-y-2 relative overflow-hidden';
-        tag.className = 'text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400';
-        tag.innerText = 'No verificado';
-        name.innerText = 'Cuenta: Sin enlazar';
-        name.className = 'text-[11px] text-slate-500 font-mono';
-        bar.className = 'bg-slate-700 h-full w-0 transition-all duration-500';
-      }
-    }
-
-    function updateHeaderBadge(network, isValid) {
-      const badge = document.getElementById(`badge-head-${network}`);
-      const dot = badge.querySelector('.status-dot');
-
-      if (isValid) {
-        badge.className = 'flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-emerald-950/50 text-emerald-300 border border-emerald-800/50 font-medium';
-        dot.className = 'status-dot w-2 h-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400';
-      } else {
-        badge.className = 'flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-900 text-slate-500 border border-slate-800';
-        dot.className = 'status-dot w-2 h-2 rounded-full bg-slate-600';
-      }
-    }
-
-    function saveTokens() {
-      const meta = document.getElementById('token-meta').value.trim();
-      const tiktok = document.getElementById('token-tiktok').value.trim();
-
-      localStorage.setItem('giograffik_meta_token', meta);
-      localStorage.setItem('giograffik_tiktok_token', tiktok);
-
-      verifyConnections();
-
-      const status = document.getElementById('save-status');
-      status.classList.remove('hidden');
-      setTimeout(() => status.classList.add('hidden'), 3000);
-
-      updateJSONOutput();
-    }
-
-    function switchTab(tab) {
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.className = 'tab-btn px-3 py-2 rounded-lg text-slate-400 hover:text-white transition-all flex items-center space-x-1.5';
-      });
-      
-      document.getElementById('sec-creador').classList.add('hidden');
-      document.getElementById('sec-inbox').classList.add('hidden');
-      document.getElementById('sec-calendario').classList.add('hidden');
-      document.getElementById('sec-config').classList.add('hidden');
-      document.getElementById('sec-payloads').classList.add('hidden');
-
-      if (tab === 'creador') {
-        document.getElementById('sec-creador').classList.remove('hidden');
-        document.getElementById('tab-creador').className = 'tab-btn px-3 py-2 rounded-lg bg-indigo-600 text-white shadow transition-all flex items-center space-x-1.5';
-      } else if (tab === 'config') {
-        document.getElementById('sec-config').classList.remove('hidden');
-        document.getElementById('tab-config').className = 'tab-btn px-3 py-2 rounded-lg bg-indigo-600 text-white shadow transition-all flex items-center space-x-1.5';
-        verifyConnections();
-      } else if (tab === 'payloads') {
-        document.getElementById('sec-payloads').classList.remove('hidden');
-        document.getElementById('tab-payloads').className = 'tab-btn px-3 py-2 rounded-lg bg-indigo-600 text-white shadow transition-all flex items-center space-x-1.5';
-        updateJSONOutput();
-      }
-    }
-
-    function previewMultipleMedia(event) {
-      const files = Array.from(event.target.files);
-      if (files.length > 0) {
-        uploadedFiles = files;
-        document.getElementById('file-count').innerText = `${files.length} Archivos cargados`;
-
-        const container = document.getElementById('media-thumbs');
-        container.innerHTML = '';
-        container.classList.remove('hidden');
-
-        files.forEach((file, index) => {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            const thumb = document.createElement('div');
-            thumb.className = 'relative aspect-square bg-slate-900 rounded-lg overflow-hidden border border-slate-800 group cursor-pointer';
-            thumb.onclick = () => showPreviewIndex(index);
-            
-            thumb.innerHTML = `
-              <img src="${e.target.result}" class="w-full h-full object-cover">
-              <span class="absolute top-1 left-1 bg-black/70 text-[9px] text-white px-1.5 rounded">${index + 1}</span>
-            `;
-            container.appendChild(thumb);
-
-            if (index === 0) showPreviewIndex(0);
-          };
-          reader.readAsDataURL(file);
-        });
-
-        document.getElementById('carousel-badge').classList.remove('hidden');
-      }
-    }
-
-    function showPreviewIndex(index) {
-      if (uploadedFiles[index]) {
+      accumulatedFiles.forEach((file, idx) => {
         const reader = new FileReader();
         reader.onload = function(e) {
-          document.getElementById('preview-placeholder').classList.add('hidden');
-          const img = document.getElementById('preview-img');
-          img.src = e.target.result;
-          img.classList.remove('hidden');
-          document.getElementById('carousel-index').innerText = `${index + 1}/${uploadedFiles.length}`;
+          const thumb = document.createElement('div');
+          thumb.className = `relative aspect-square bg-slate-900 rounded-lg overflow-hidden border ${idx === activePreviewIndex ? 'border-pink-500 ring-2 ring-pink-500/50' : 'border-slate-800'} cursor-pointer group`;
+          
+          thumb.onclick = () => {
+            activePreviewIndex = idx;
+            renderThumbnails();
+            showPreviewImage(e.target.result, idx);
+          };
+
+          thumb.innerHTML = `
+            <img src="${e.target.result}" class="w-full h-full object-cover">
+            <span class="absolute top-1 left-1 bg-black/70 text-[9px] text-white px-1.5 rounded">${idx + 1}</span>
+            <button onclick="event.stopPropagation(); removeMediaFile(${idx})" class="absolute top-1 right-1 w-4 h-4 rounded-full bg-rose-600 text-white text-[9px] flex items-center justify-center opacity-80 hover:opacity-100">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          `;
+          container.appendChild(thumb);
+
+          if (idx === activePreviewIndex) {
+            showPreviewImage(e.target.result, idx);
+          }
         };
-        reader.readAsDataURL(uploadedFiles[index]);
-      }
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function showPreviewImage(srcUrl, index) {
+      document.querySelectorAll('.preview-placeholder').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.preview-img-target').forEach(img => {
+        img.src = srcUrl;
+        img.classList.remove('hidden');
+      });
+      document.querySelectorAll('.carousel-badge').forEach(badge => badge.classList.remove('hidden'));
+      document.querySelectorAll('.carousel-index-text').forEach(el => el.innerText = `${index + 1}/${accumulatedFiles.length}`);
+    }
+
+    function resetPreviewImages() {
+      document.querySelectorAll('.preview-placeholder').forEach(el => el.classList.remove('hidden'));
+      document.querySelectorAll('.preview-img-target').forEach(img => {
+        img.src = '';
+        img.classList.add('hidden');
+      });
+      document.querySelectorAll('.carousel-badge').forEach(badge => badge.classList.add('hidden'));
     }
 
     function switchPreviewNetwork(network) {
@@ -534,83 +429,53 @@
         btn.className = 'prev-net-btn py-1.5 rounded-lg text-slate-400 hover:text-white flex items-center justify-center space-x-1';
       });
 
-      const label = document.getElementById('prev-network-label');
+      document.getElementById('mockup-instagram').classList.add('hidden');
+      document.getElementById('mockup-facebook').classList.add('hidden');
+      document.getElementById('mockup-tiktok').classList.add('hidden');
 
       if (network === 'instagram') {
         document.getElementById('prev-net-instagram').className = 'prev-net-btn py-1.5 rounded-lg bg-pink-600 text-white flex items-center justify-center space-x-1';
-        label.innerText = 'Vista previa de Instagram (Formato Carrusel / Reel)';
+        document.getElementById('mockup-instagram').classList.remove('hidden');
       } else if (network === 'facebook') {
         document.getElementById('prev-net-facebook').className = 'prev-net-btn py-1.5 rounded-lg bg-blue-600 text-white flex items-center justify-center space-x-1';
-        label.innerText = 'Vista previa de Facebook (Álbum / Publicación)';
+        document.getElementById('mockup-facebook').classList.remove('hidden');
       } else if (network === 'tiktok') {
         document.getElementById('prev-net-tiktok').className = 'prev-net-btn py-1.5 rounded-lg bg-cyan-600 text-white flex items-center justify-center space-x-1';
-        label.innerText = 'Vista previa de TikTok (Photo Mode / Video Feed)';
+        document.getElementById('mockup-tiktok').classList.remove('hidden');
       }
     }
 
-    function updatePreview() {
+    function updatePreviewText() {
       const text = document.getElementById('post-caption').value;
-      document.getElementById('preview-caption-text').innerText = text || 'Tu descripción aparecerá aquí...';
-      updateJSONOutput();
+      document.querySelectorAll('.preview-caption-target').forEach(el => {
+        el.innerText = text || 'Tu descripción aparecerá aquí...';
+      });
     }
 
     function insertSampleCaption() {
-      const sample = "🔥 ¡Nuevo catálogo exclusivo para Sublimación Deportiva Giograffik! ⚽👕\n\nDesliza para ver todos los ángulos del conjunto. Pedidos al mayor y menor con personalización total de nombre y número.\n\n#Sublimacion #RopaDeportiva #Giograffik #Bolivia";
+      const sample = "🔥 ¡Nuevo catálogo exclusivo para Sublimación Deportiva Giograffik! ⚽👕\n\nDesliza para ver todos los ángulos. Pedidos al mayor y menor con personalización total de nombre y número.\n\n#Sublimacion #RopaDeportiva #Giograffik #Bolivia";
       document.getElementById('post-caption').value = sample;
-      updatePreview();
+      updatePreviewText();
     }
 
     function resetForm() {
       document.getElementById('post-caption').value = '';
       document.getElementById('file-input').value = '';
-      uploadedFiles = [];
-      document.getElementById('media-thumbs').classList.add('hidden');
-      document.getElementById('file-count').innerText = '0 Archivos cargados';
-      document.getElementById('preview-img').classList.add('hidden');
-      document.getElementById('preview-placeholder').classList.remove('hidden');
-      document.getElementById('carousel-badge').classList.add('hidden');
-      updatePreview();
+      accumulatedFiles = [];
+      activePreviewIndex = 0;
+      renderThumbnails();
+      updatePreviewText();
     }
 
-    function updateJSONOutput() {
-      const metaToken = localStorage.getItem('giograffik_meta_token') || 'NO_CONFIGURADO';
-      const tiktokToken = localStorage.getItem('giograffik_tiktok_token') || 'NO_CONFIGURADO';
-
-      const payload = {
-        app_author: "Giograffik",
-        publisher_engine: "Giograffik Social Publisher v5.1",
-        target_networks: [
-          document.getElementById('chk-instagram').checked ? "instagram" : null,
-          document.getElementById('chk-facebook').checked ? "facebook" : null,
-          document.getElementById('chk-tiktok').checked ? "tiktok" : null
-        ].filter(Boolean),
-        post_type: uploadedFiles.length > 1 ? "CAROUSEL_ALBUM" : "SINGLE_MEDIA",
-        total_files_attached: uploadedFiles.length,
-        post_content: {
-          text_caption: document.getElementById('post-caption').value || "Ejemplo de publicación"
-        },
-        verified_accounts: {
-          instagram: metaToken.startsWith('EAA') ? "@giograffik_oficial" : "NO_VERIFICADO",
-          facebook: metaToken.startsWith('EAA') ? "Giograffik Sublimación" : "NO_VERIFICADO",
-          tiktok: tiktokToken.length > 8 ? "@giograffik" : "NO_VERIFICADO"
-        }
-      };
-
-      document.getElementById('json-output').innerText = JSON.stringify(payload, null, 2);
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = 'tab-btn px-3 py-2 rounded-lg text-slate-400 hover:text-white transition-all flex items-center space-x-1.5';
+      });
+      document.getElementById('tab-' + tab).className = 'tab-btn px-3 py-2 rounded-lg bg-indigo-600 text-white shadow transition-all flex items-center space-x-1.5';
     }
 
     function publishContent(mode) {
-      const meta = localStorage.getItem('giograffik_meta_token');
-      if (!meta) {
-        alert("⚠️ Por favor primero ingresa tu Token de Meta en la pestaña 'Tokens & Estado'.");
-        switchTab('config');
-        return;
-      }
-      if (mode === 'now') {
-        alert(`🚀 ¡Procesando publicación multi-red (${uploadedFiles.length || 1} archivos) en las cuentas verificadas!`);
-      } else {
-        alert("📅 ¡Publicación añadida exitosamente al Calendario de Programación!");
-      }
+      alert(`🚀 ¡Procesando publicación con ${accumulatedFiles.length} archivos acumulados!`);
     }
   </script>
 </body>
