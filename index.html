@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Giograffik Social Publisher - Platform Suite</title>
+  <title>Giograffik Social Publisher - Platform Suite v5.0</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <script>
@@ -42,9 +42,9 @@
         <div>
           <div class="flex items-center space-x-2">
             <h1 class="font-bold text-lg leading-none">Giograffik <span class="text-pink-500 font-normal">Social Publisher</span></h1>
-            <span class="text-[10px] bg-slate-800 border border-slate-700 text-slate-400 px-2 py-0.5 rounded-full">v4.0</span>
+            <span class="text-[10px] bg-slate-800 border border-slate-700 text-slate-400 px-2 py-0.5 rounded-full">v5.0</span>
           </div>
-          <p class="text-xs text-slate-400">Plataforma Integral de Programación, Métricas y API Multi-Red</p>
+          <p class="text-xs text-slate-400">Plataforma Integral de Publicación Carrusel, Respuestas e Inbox</p>
         </div>
       </div>
 
@@ -53,6 +53,11 @@
         <button onclick="switchTab('creador')" id="tab-creador" class="tab-btn px-3 py-2 rounded-lg bg-indigo-600 text-white shadow transition-all flex items-center space-x-1.5">
           <i class="fa-solid fa-wand-magic-sparkles"></i>
           <span>Creador</span>
+        </button>
+        <button onclick="switchTab('inbox')" id="tab-inbox" class="tab-btn px-3 py-2 rounded-lg text-slate-400 hover:text-white transition-all flex items-center space-x-1.5">
+          <i class="fa-solid fa-comments"></i>
+          <span>Inbox & Comentarios</span>
+          <span class="w-2 h-2 rounded-full bg-pink-500 inline-block"></span>
         </button>
         <button onclick="switchTab('calendario')" id="tab-calendario" class="tab-btn px-3 py-2 rounded-lg text-slate-400 hover:text-white transition-all flex items-center space-x-1.5">
           <i class="fa-regular fa-calendar-days"></i>
@@ -65,7 +70,7 @@
         <button onclick="switchTab('config')" id="tab-config" class="tab-btn px-3 py-2 rounded-lg text-slate-400 hover:text-white transition-all flex items-center space-x-1.5">
           <i class="fa-solid fa-key"></i>
           <span>Tokens & APIs</span>
-          <span id="badge-api-status" class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
+          <span id="badge-api-status" class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
         </button>
         <button onclick="switchTab('payloads')" id="tab-payloads" class="tab-btn px-3 py-2 rounded-lg text-slate-400 hover:text-white transition-all flex items-center space-x-1.5">
           <i class="fa-solid fa-code"></i>
@@ -80,13 +85,13 @@
 
     <!-- SECCIÓN 1: CREADOR / PUBLICADOR -->
     <section id="sec-creador" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      <!-- FORMULARIO -->
+      <!-- FORMULARIO DE PUBLICACIÓN -->
       <div class="lg:col-span-7 space-y-6">
         <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-5">
           <div class="flex items-center justify-between">
             <h2 class="text-base font-semibold flex items-center space-x-2">
               <i class="fa-solid fa-share-nodes text-pink-500"></i>
-              <span>Nueva Publicación Multi-Red</span>
+              <span>Nueva Publicación Multi-Red (Carrusel hasta 10+ imágenes)</span>
             </h2>
             <button onclick="resetForm()" class="text-xs text-slate-400 hover:text-slate-200 flex items-center space-x-1">
               <i class="fa-solid fa-rotate-left"></i>
@@ -124,19 +129,26 @@
             </div>
           </div>
 
-          <!-- SUBIDA DE ARCHIVO -->
+          <!-- SUBIDA MULTI ARCHIVOS / CARRUSEL -->
           <div>
-            <label class="block text-xs font-medium text-slate-400 mb-2">MULTIMEDIA (DISEÑO / MOCKUP DE PRENDA)</label>
-            <div class="border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-2xl p-6 text-center bg-slate-950/30 transition-all cursor-pointer relative group" onclick="document.getElementById('file-input').click()">
-              <input type="file" id="file-input" class="hidden" accept="image/*,video/*" onchange="previewMedia(event)">
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-xs font-medium text-slate-400">MULTIMEDIA (SELECCIONA HASTA 10 O MÁS IMÁGENES/VIDEOS)</label>
+              <span id="file-count" class="text-[11px] font-semibold text-pink-400">0 Archivos cargados</span>
+            </div>
+            
+            <div class="border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-2xl p-5 text-center bg-slate-950/30 transition-all cursor-pointer relative group" onclick="document.getElementById('file-input').click()">
+              <input type="file" id="file-input" class="hidden" accept="image/*,video/*" multiple onchange="previewMultipleMedia(event)">
               <div class="space-y-2">
-                <div class="w-12 h-12 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-400 group-hover:text-indigo-400 group-hover:scale-110 transition-all">
-                  <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                <div class="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-400 group-hover:text-indigo-400 group-hover:scale-110 transition-all">
+                  <i class="fa-solid fa-images text-lg"></i>
                 </div>
-                <p class="text-xs font-medium text-slate-300">Haz clic para subir tu diseño de sublimación o video</p>
-                <p class="text-[10px] text-slate-500">Soporta PNG, JPG, MP4 (Formato recomendado 1:1 o 9:16 vertical)</p>
+                <p class="text-xs font-medium text-slate-300">Haz clic para seleccionar varias imágenes o videos a la vez</p>
+                <p class="text-[10px] text-slate-500">Soporta PNG, JPG, MP4 en lote para publicaciones tipo carrusel o álbum</p>
               </div>
             </div>
+
+            <!-- GALERÍA DE THUMBNAILS -->
+            <div id="media-thumbs" class="grid grid-cols-5 gap-2 mt-3 hidden"></div>
           </div>
 
           <!-- DESCRIPCIÓN Y HASHTAGS -->
@@ -145,10 +157,10 @@
               <label class="block text-xs font-medium text-slate-400">DESCRIPCIÓN / TEXTO DEL POST</label>
               <button onclick="insertSampleCaption()" class="text-[10px] text-pink-400 hover:underline">Insertar Plantilla Giograffik</button>
             </div>
-            <textarea id="post-caption" rows="4" oninput="updatePreview()" class="w-full bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 custom-scrollbar" placeholder="Escribe el pie de foto, detalles del producto, tallas, etc..."></textarea>
+            <textarea id="post-caption" rows="4" oninput="updatePreview()" class="w-full bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 custom-scrollbar" placeholder="Escribe el pie de foto, detalles del producto, tallas, precios, etc..."></textarea>
           </div>
 
-          <!-- FECHA Y HORA -->
+          <!-- FECHA Y HORA DE PROGRAMACIÓN -->
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">FECHA DE PROGRAMACIÓN</label>
@@ -160,13 +172,13 @@
             </div>
           </div>
 
-          <!-- BOTONES PUBLICAR / PROGRAMAR -->
+          <!-- BOTONES -->
           <div class="grid grid-cols-2 gap-3 pt-2">
-            <button onclick="publishContent('now')" class="py-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-semibold rounded-xl text-xs shadow-lg shadow-purple-600/20 active:scale-[0.99] transition-all flex items-center justify-center space-x-2">
+            <button onclick="publishContent('now')" class="py-3.5 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-semibold rounded-xl text-xs shadow-lg shadow-purple-600/20 active:scale-[0.99] transition-all flex items-center justify-center space-x-2">
               <i class="fa-solid fa-paper-plane"></i>
               <span>Publicar Ahora</span>
             </button>
-            <button onclick="publishContent('schedule')" class="py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs shadow-lg shadow-indigo-600/20 active:scale-[0.99] transition-all flex items-center justify-center space-x-2">
+            <button onclick="publishContent('schedule')" class="py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-xs shadow-lg shadow-indigo-600/20 active:scale-[0.99] transition-all flex items-center justify-center space-x-2">
               <i class="fa-regular fa-clock"></i>
               <span>Agendar al Calendario</span>
             </button>
@@ -174,36 +186,61 @@
         </div>
       </div>
 
-      <!-- MOCKUP EN VIVO -->
+      <!-- PREVISUALIZADOR TRIPLE DE REDES SOCIALES -->
       <div class="lg:col-span-5 space-y-4">
-        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sticky top-24">
-          <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 flex items-center justify-between">
-            <span>Previsualización en Vivo</span>
-            <span class="text-pink-500 text-[11px] normal-case">@giograffik_oficial</span>
-          </h3>
+        <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 sticky top-20 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Previsualización por Red</h3>
+            <span class="text-pink-500 text-[11px] font-bold">@giograffik_oficial</span>
+          </div>
 
+          <!-- SELECTOR DE VISTA DE RED SOCIAL -->
+          <div class="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px] font-medium">
+            <button onclick="switchPreviewNetwork('instagram')" id="prev-net-instagram" class="prev-net-btn py-1.5 rounded-lg bg-pink-600 text-white flex items-center justify-center space-x-1">
+              <i class="fa-brands fa-instagram"></i>
+              <span>Instagram</span>
+            </button>
+            <button onclick="switchPreviewNetwork('facebook')" id="prev-net-facebook" class="prev-net-btn py-1.5 rounded-lg text-slate-400 hover:text-white flex items-center justify-center space-x-1">
+              <i class="fa-brands fa-facebook"></i>
+              <span>Facebook</span>
+            </button>
+            <button onclick="switchPreviewNetwork('tiktok')" id="prev-net-tiktok" class="prev-net-btn py-1.5 rounded-lg text-slate-400 hover:text-white flex items-center justify-center space-x-1">
+              <i class="fa-brands fa-tiktok"></i>
+              <span>TikTok</span>
+            </button>
+          </div>
+
+          <!-- MOCKUP DINÁMICO -->
           <div class="bg-black rounded-xl border border-slate-800 overflow-hidden shadow-2xl">
+            <!-- Header del Post -->
             <div class="p-3 flex items-center justify-between border-b border-slate-900">
               <div class="flex items-center space-x-2.5">
                 <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-500 p-0.5">
-                  <div class="w-full h-full bg-black rounded-full flex items-center justify-center text-[10px] font-bold">GI</div>
+                  <div class="w-full h-full bg-black rounded-full flex items-center justify-center text-[10px] font-bold text-white">GI</div>
                 </div>
                 <div>
                   <p class="text-xs font-semibold leading-none text-slate-200">giograffik_oficial <i class="fa-solid fa-circle-check text-blue-500 text-[10px]"></i></p>
-                  <p class="text-[9px] text-slate-500 leading-tight">Diseño & Sublimación Studio</p>
+                  <p class="text-[9px] text-slate-500 leading-tight" id="prev-network-label">Vista previa de Instagram</p>
                 </div>
               </div>
               <i class="fa-solid fa-ellipsis text-slate-500 text-xs"></i>
             </div>
 
+            <!-- Contenedor del Carrusel de Imagen -->
             <div class="aspect-square bg-slate-900 flex items-center justify-center overflow-hidden relative" id="preview-container">
               <div id="preview-placeholder" class="text-center p-6 text-slate-600">
-                <i class="fa-regular fa-image text-4xl mb-2"></i>
-                <p class="text-xs">Sube una imagen o video para previsualizar aquí tu diseño</p>
+                <i class="fa-regular fa-images text-4xl mb-2"></i>
+                <p class="text-xs">Sube tus fotos o videos para previsualizar aquí el carrusel</p>
               </div>
               <img id="preview-img" class="w-full h-full object-cover hidden" src="" alt="Vista previa">
+              
+              <!-- Badge indicador de carrusel -->
+              <div id="carousel-badge" class="absolute top-3 right-3 bg-black/70 backdrop-blur text-white text-[10px] font-semibold px-2 py-0.5 rounded-full hidden">
+                <i class="fa-solid fa-layer-group"></i> <span id="carousel-index">1/1</span>
+              </div>
             </div>
 
+            <!-- Footer de la Red -->
             <div class="p-3 space-y-2">
               <div class="flex items-center justify-between text-slate-300 text-base">
                 <div class="flex space-x-3">
@@ -213,7 +250,7 @@
                 </div>
                 <i class="fa-regular fa-bookmark hover:text-yellow-500 cursor-pointer"></i>
               </div>
-              <p class="text-[11px] font-semibold text-slate-200">2,840 Me gusta</p>
+              <p class="text-[11px] font-semibold text-slate-200">Giograffik Studio • Marca destacada</p>
               <div class="text-[11px] text-slate-300 space-y-1">
                 <p><span class="font-semibold text-slate-100">giograffik_oficial</span> <span id="preview-caption-text">Tu descripción aparecerá aquí en tiempo real...</span></p>
               </div>
@@ -223,7 +260,110 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 2: CALENDARIO DE PROGRAMACIÓN -->
+    <!-- SECCIÓN 2: BANDEJA DE MENSAJES Y COMENTARIOS (INBOX) -->
+    <section id="sec-inbox" class="hidden space-y-6">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div>
+            <h2 class="text-base font-bold text-slate-100 flex items-center space-x-2">
+              <i class="fa-solid fa-comments text-pink-500"></i>
+              <span>Centro de Respuestas e Inbox Unificado</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">Responde comentarios y mensajes directos de Instagram, Facebook y TikTok sin salir del panel.</p>
+          </div>
+          <div class="flex space-x-2 text-xs">
+            <button class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-200 font-medium">Todos</button>
+            <button class="px-3 py-1.5 bg-pink-950/60 text-pink-400 border border-pink-800/50 rounded-lg font-medium">Instagram</button>
+            <button class="px-3 py-1.5 bg-blue-950/60 text-blue-400 border border-blue-800/50 rounded-lg font-medium">Facebook</button>
+            <button class="px-3 py-1.5 bg-cyan-950/60 text-cyan-400 border border-cyan-800/50 rounded-lg font-medium">TikTok</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- LISTA DE COMENTARIOS / CONSULTAS -->
+          <div class="lg:col-span-5 space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar pr-1">
+            <div class="p-3.5 rounded-xl border border-indigo-500/50 bg-indigo-950/20 cursor-pointer hover:border-indigo-400 transition-all">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-200 flex items-center space-x-1.5">
+                  <i class="fa-brands fa-instagram text-pink-500"></i>
+                  <span>@carlos_deportes</span>
+                </span>
+                <span class="text-[10px] text-slate-500">Hace 12 min</span>
+              </div>
+              <p class="text-xs text-slate-300 mt-1 line-clamp-2">"Buenas noches, ¿qué precio tienen las camisetas de fútbol para un equipo de 14 jugadores?"</p>
+              <span class="inline-block mt-2 text-[9px] px-2 py-0.5 bg-pink-950 text-pink-400 border border-pink-800/50 rounded-full font-medium">Comentario en Post Futsal</span>
+            </div>
+
+            <div class="p-3.5 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-200 flex items-center space-x-1.5">
+                  <i class="fa-brands fa-facebook text-blue-500"></i>
+                  <span>María Fernández</span>
+                </span>
+                <span class="text-[10px] text-slate-500">Hace 45 min</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1 line-clamp-2">"¿Hacen envíos a todo el país para uniformes de vóley?"</p>
+              <span class="inline-block mt-2 text-[9px] px-2 py-0.5 bg-blue-950 text-blue-400 border border-blue-800/50 rounded-full font-medium">Mensaje Directo</span>
+            </div>
+
+            <div class="p-3.5 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-200 flex items-center space-x-1.5">
+                  <i class="fa-brands fa-tiktok text-cyan-400"></i>
+                  <span>@voleibol_bolivia</span>
+                </span>
+                <span class="text-[10px] text-slate-500">Hace 2 hrs</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1 line-clamp-2">"¡Qué excelente calidad de sublimación! 🔥¿Tienen plantillas editables?"</p>
+              <span class="inline-block mt-2 text-[9px] px-2 py-0.5 bg-cyan-950 text-cyan-400 border border-cyan-800/50 rounded-full font-medium">Comentario en Video</span>
+            </div>
+          </div>
+
+          <!-- ÁREA DE CHAT Y RESPUESTA RÁPIDA -->
+          <div class="lg:col-span-7 bg-slate-950 rounded-xl border border-slate-800 p-4 flex flex-col justify-between h-[500px]">
+            <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+              <div>
+                <p class="text-xs font-bold text-slate-200 flex items-center space-x-2">
+                  <span>Conversación con @carlos_deportes</span>
+                  <i class="fa-brands fa-instagram text-pink-500 text-sm"></i>
+                </p>
+                <p class="text-[10px] text-slate-400">Post original: "Conjunto Futsal Italia 2026"</p>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-950 text-amber-400 border border-amber-800">Pendiente</span>
+            </div>
+
+            <!-- CHAT MENSAJES -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar my-4 space-y-3 pr-2">
+              <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl max-w-[85%] text-xs text-slate-200">
+                <p class="font-bold text-[10px] text-pink-400 mb-1">@carlos_deportes</p>
+                "Buenas noches, ¿qué precio tienen las camisetas de fútbol para un equipo de 14 jugadores?"
+              </div>
+            </div>
+
+            <!-- CAJA DE RESPUESTA -->
+            <div class="space-y-2">
+              <div class="flex space-x-2">
+                <button onclick="insertQuickReply('precio')" class="text-[10px] bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 px-2.5 py-1 rounded-lg">
+                  + Plantilla Precios WhatsApp
+                </button>
+                <button onclick="insertQuickReply('envios')" class="text-[10px] bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 px-2.5 py-1 rounded-lg">
+                  + Envío Catálogo
+                </button>
+              </div>
+              <div class="flex space-x-2">
+                <input type="text" id="reply-input" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Escribe tu respuesta oficial desde Giograffik...">
+                <button onclick="sendReply()" class="px-5 bg-gradient-to-r from-pink-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 text-white font-medium text-xs rounded-xl transition-all flex items-center justify-center space-x-1.5">
+                  <i class="fa-solid fa-paper-plane"></i>
+                  <span>Responder</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: CALENDARIO DE PROGRAMACIÓN -->
     <section id="sec-calendario" class="hidden space-y-6">
       <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-6">
         <div class="flex items-center justify-between">
@@ -240,8 +380,7 @@
           </button>
         </div>
 
-        <!-- LISTA DE PUBLICACIONES PROGRAMADAS -->
-        <div class="space-y-3" id="scheduled-list">
+        <div class="space-y-3">
           <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/60 flex items-center justify-between">
             <div class="flex items-center space-x-4">
               <div class="w-12 h-12 rounded-lg bg-purple-950/50 border border-purple-800/40 flex items-center justify-center text-purple-400 font-bold text-xs">
@@ -249,7 +388,7 @@
               </div>
               <div>
                 <div class="flex items-center space-x-2">
-                  <span class="text-xs font-bold text-slate-200">Mockup Polera Futsal Italia 2026</span>
+                  <span class="text-xs font-bold text-slate-200">Carrusel (5 fotos) Poleras Futsal Italia 2026</span>
                   <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">Programado 15:00 hrs</span>
                 </div>
                 <p class="text-xs text-slate-400 mt-0.5">Redes: Instagram, Facebook, TikTok</p>
@@ -260,104 +399,37 @@
               <button class="p-2 text-slate-400 hover:text-rose-400"><i class="fa-solid fa-trash-can text-xs"></i></button>
             </div>
           </div>
-
-          <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/60 flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-              <div class="w-12 h-12 rounded-lg bg-indigo-950/50 border border-indigo-800/40 flex items-center justify-center text-indigo-400 font-bold text-xs">
-                24 OCT
-              </div>
-              <div>
-                <div class="flex items-center space-x-2">
-                  <span class="text-xs font-bold text-slate-200">Video Proceso Sublimación de Conjunto Voleibol</span>
-                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">Programado 18:30 hrs</span>
-                </div>
-                <p class="text-xs text-slate-400 mt-0.5">Redes: TikTok, Instagram Reel</p>
-              </div>
-            </div>
-            <div class="flex items-center space-x-2">
-              <button class="p-2 text-slate-400 hover:text-slate-200"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
-              <button class="p-2 text-slate-400 hover:text-rose-400"><i class="fa-solid fa-trash-can text-xs"></i></button>
-            </div>
-          </div>
         </div>
       </div>
     </section>
 
-    <!-- SECCIÓN 3: ESTADÍSTICAS & MÉTRICAS (ANALYTICS) -->
+    <!-- SECCIÓN 4: ESTADÍSTICAS & MÉTRICAS -->
     <section id="sec-estadisticas" class="hidden space-y-6">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5">
           <p class="text-xs text-slate-400 font-medium">Alcance Total (30 días)</p>
-          <p class="text-2xl font-bold text-white mt-1">48,290</p>
-          <span class="text-[10px] text-emerald-400 font-medium"><i class="fa-solid fa-arrow-trend-up"></i> +14.2% vs mes anterior</span>
+          <p class="text-2xl font-bold text-white mt-1">52,410</p>
+          <span class="text-[10px] text-emerald-400 font-medium"><i class="fa-solid fa-arrow-trend-up"></i> +16.2% vs mes anterior</span>
         </div>
         <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5">
           <p class="text-xs text-slate-400 font-medium">Interacciones & Likes</p>
-          <p class="text-2xl font-bold text-pink-400 mt-1">6,840</p>
-          <span class="text-[10px] text-emerald-400 font-medium"><i class="fa-solid fa-arrow-trend-up"></i> +8.5% en Instagram</span>
+          <p class="text-2xl font-bold text-pink-400 mt-1">7,920</p>
+          <span class="text-[10px] text-emerald-400 font-medium"><i class="fa-solid fa-arrow-trend-up"></i> +11.5% en Instagram</span>
         </div>
         <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5">
           <p class="text-xs text-slate-400 font-medium">Reproducciones TikTok</p>
-          <p class="text-2xl font-bold text-cyan-400 mt-1">112,500</p>
+          <p class="text-2xl font-bold text-cyan-400 mt-1">128,000</p>
           <span class="text-[10px] text-emerald-400 font-medium"><i class="fa-solid fa-fire"></i> Viral en Sublimación</span>
         </div>
         <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5">
-          <p class="text-xs text-slate-400 font-medium">Publicaciones Realizadas</p>
-          <p class="text-2xl font-bold text-indigo-400 mt-1">34</p>
-          <span class="text-[10px] text-slate-500 font-medium">Este mes de Octubre</span>
-        </div>
-      </div>
-
-      <!-- TABLA DE RENDIMIENTO DE POSTS -->
-      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4">
-        <h3 class="text-sm font-bold text-slate-200 flex items-center space-x-2">
-          <i class="fa-solid fa-chart-simple text-emerald-400"></i>
-          <span>Rendimiento por Publicación Reciente</span>
-        </h3>
-        <div class="overflow-x-auto custom-scrollbar">
-          <table class="w-full text-left text-xs text-slate-300">
-            <thead class="bg-slate-950 text-slate-400 uppercase text-[10px] border-b border-slate-800">
-              <tr>
-                <th class="p-3">Publicación / Arte</th>
-                <th class="p-3">Redes</th>
-                <th class="p-3">Alcance</th>
-                <th class="p-3">Likes</th>
-                <th class="p-3">Comentarios</th>
-                <th class="p-3">Estado</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-800/60">
-              <tr>
-                <td class="p-3 font-semibold text-slate-100">Camiseta Sublimada Futsal Amarilla</td>
-                <td class="p-3"><i class="fa-brands fa-instagram text-pink-500"></i> <i class="fa-brands fa-facebook text-blue-500"></i></td>
-                <td class="p-3">12,400</td>
-                <td class="p-3">1,820</td>
-                <td class="p-3">94</td>
-                <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 text-[10px]">Publicado</span></td>
-              </tr>
-              <tr>
-                <td class="p-3 font-semibold text-slate-100">Reel: Proceso de Estampado Giograffik</td>
-                <td class="p-3"><i class="fa-brands fa-tiktok text-cyan-400"></i> <i class="fa-brands fa-instagram text-pink-500"></i></td>
-                <td class="p-3">28,900</td>
-                <td class="p-3">3,410</td>
-                <td class="p-3">210</td>
-                <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 text-[10px]">Publicado</span></td>
-              </tr>
-              <tr>
-                <td class="p-3 font-semibold text-slate-100">Poleras Voleibol Damas Personalizadas</td>
-                <td class="p-3"><i class="fa-brands fa-facebook text-blue-500"></i></td>
-                <td class="p-3">6,990</td>
-                <td class="p-3">610</td>
-                <td class="p-3">38</td>
-                <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 text-[10px]">Publicado</span></td>
-              </tr>
-            </tbody>
-          </table>
+          <p class="text-xs text-slate-400 font-medium">Comentarios Respondidos</p>
+          <p class="text-2xl font-bold text-indigo-400 mt-1">184</p>
+          <span class="text-[10px] text-slate-500 font-medium">Tiempo medio: 8 min</span>
         </div>
       </div>
     </section>
 
-    <!-- SECCIÓN 4: CONFIGURACIÓN DE TOKENS & APIS -->
+    <!-- SECCIÓN 5: CONFIGURACIÓN DE TOKENS & APIS -->
     <section id="sec-config" class="hidden max-w-3xl mx-auto space-y-6">
       <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-6">
         <div>
@@ -366,7 +438,7 @@
             <span>Credenciales y Tokens de Enlace</span>
           </h2>
           <p class="text-xs text-slate-400 mt-1">
-            Ingresa tus Tokens de Desarrollador para conectar este panel directamente con tus cuentas de Instagram, Facebook y TikTok.
+            Tus Tokens de Meta y TikTok se guardan directamente en tu navegador para mantener la conexión activa.
           </p>
         </div>
 
@@ -376,29 +448,27 @@
               <span class="flex items-center space-x-2">
                 <i class="fa-brands fa-instagram text-pink-500"></i>
                 <i class="fa-brands fa-facebook text-blue-500"></i>
-                <span>Meta User Access Token (Instagram & Facebook API)</span>
+                <span>Meta Access Token (Instagram & Facebook)</span>
               </span>
-              <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="text-[10px] text-indigo-400 hover:underline">Obtener en Meta Explorer &rarr;</a>
             </label>
-            <textarea id="token-meta" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 custom-scrollbar" placeholder="Pega aquí el Token largo (EAA...)..."></textarea>
+            <textarea id="token-meta" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500 custom-scrollbar" placeholder="Pega aquí tu token..."></textarea>
           </div>
 
           <div class="space-y-2">
             <label class="block text-xs font-semibold text-slate-300 flex items-center justify-between">
               <span class="flex items-center space-x-2">
                 <i class="fa-brands fa-tiktok text-cyan-400"></i>
-                <span>TikTok Content Posting Bearer Token</span>
+                <span>TikTok Content Posting Bearer Token / Client Key</span>
               </span>
-              <a href="https://developers.tiktok.com/" target="_blank" class="text-[10px] text-indigo-400 hover:underline">Obtener en TikTok Portal &rarr;</a>
             </label>
-            <input type="text" id="token-tiktok" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Pega aquí tu Bearer Token de TikTok (act_...)">
+            <input type="text" id="token-tiktok" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Pega aquí tu clave de TikTok...">
           </div>
         </div>
 
         <div class="pt-2 flex items-center justify-between border-t border-slate-800">
           <div id="save-status" class="text-xs text-emerald-400 hidden flex items-center space-x-1.5">
             <i class="fa-solid fa-circle-check"></i>
-            <span>¡Tokens guardados correctamente en este navegador!</span>
+            <span>¡Tokens actualizados y guardados correctamente!</span>
           </div>
           <button onclick="saveTokens()" class="ml-auto px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl text-xs shadow-lg shadow-indigo-600/20 transition-all flex items-center space-x-2">
             <i class="fa-solid fa-floppy-disk"></i>
@@ -408,16 +478,13 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 5: PAYLOADS API -->
+    <!-- SECCIÓN 6: PAYLOADS API -->
     <section id="sec-payloads" class="hidden space-y-6">
       <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
         <h2 class="text-base font-semibold text-slate-200 flex items-center space-x-2">
           <i class="fa-solid fa-code text-indigo-400"></i>
-          <span>Estructura JSON y Scripts de Integración</span>
+          <span>Estructura JSON y Payloads API v5.0</span>
         </h2>
-        <p class="text-xs text-slate-400">
-          Estructura de la petición enviada hacia la API de Meta y TikTok.
-        </p>
         <pre id="json-output" class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono text-emerald-400 overflow-x-auto custom-scrollbar">cargando...</pre>
       </div>
     </section>
@@ -425,6 +492,8 @@
   </main>
 
   <script>
+    let uploadedFiles = [];
+
     window.onload = function() {
       const meta = localStorage.getItem('giograffik_meta_token') || '';
       const tiktok = localStorage.getItem('giograffik_tiktok_token') || '';
@@ -466,6 +535,7 @@
       });
       
       document.getElementById('sec-creador').classList.add('hidden');
+      document.getElementById('sec-inbox').classList.add('hidden');
       document.getElementById('sec-calendario').classList.add('hidden');
       document.getElementById('sec-estadisticas').classList.add('hidden');
       document.getElementById('sec-config').classList.add('hidden');
@@ -474,6 +544,9 @@
       if (tab === 'creador') {
         document.getElementById('sec-creador').classList.remove('hidden');
         document.getElementById('tab-creador').className = 'tab-btn px-3 py-2 rounded-lg bg-indigo-600 text-white shadow transition-all flex items-center space-x-1.5';
+      } else if (tab === 'inbox') {
+        document.getElementById('sec-inbox').classList.remove('hidden');
+        document.getElementById('tab-inbox').className = 'tab-btn px-3 py-2 rounded-lg bg-indigo-600 text-white shadow transition-all flex items-center space-x-1.5';
       } else if (tab === 'calendario') {
         document.getElementById('sec-calendario').classList.remove('hidden');
         document.getElementById('tab-calendario').className = 'tab-btn px-3 py-2 rounded-lg bg-indigo-600 text-white shadow transition-all flex items-center space-x-1.5';
@@ -490,29 +563,83 @@
       }
     }
 
-    function updatePreview() {
-      const text = document.getElementById('post-caption').value;
-      const preview = document.getElementById('preview-caption-text');
-      preview.innerText = text || 'Tu descripción aparecerá aquí en tiempo real a medida que la escribas...';
-      updateJSONOutput();
+    // MANEJO DE MULTIPLES ARCHIVOS (CARRUSEL)
+    function previewMultipleMedia(event) {
+      const files = Array.from(event.target.files);
+      if (files.length > 0) {
+        uploadedFiles = files;
+        document.getElementById('file-count').innerText = `${files.length} Archivos cargados`;
+
+        const container = document.getElementById('media-thumbs');
+        container.innerHTML = '';
+        container.classList.remove('hidden');
+
+        files.forEach((file, index) => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const thumb = document.createElement('div');
+            thumb.className = 'relative aspect-square bg-slate-900 rounded-lg overflow-hidden border border-slate-800 group cursor-pointer';
+            thumb.onclick = () => showPreviewIndex(index);
+            
+            thumb.innerHTML = `
+              <img src="${e.target.result}" class="w-full h-full object-cover">
+              <span class="absolute top-1 left-1 bg-black/70 text-[9px] text-white px-1.5 rounded">${index + 1}</span>
+            `;
+            container.appendChild(thumb);
+
+            if (index === 0) {
+              showPreviewIndex(0);
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+
+        document.getElementById('carousel-badge').classList.remove('hidden');
+      }
     }
 
-    function previewMedia(event) {
-      const file = event.target.files[0];
-      if (file) {
+    function showPreviewIndex(index) {
+      if (uploadedFiles[index]) {
         const reader = new FileReader();
         reader.onload = function(e) {
           document.getElementById('preview-placeholder').classList.add('hidden');
           const img = document.getElementById('preview-img');
           img.src = e.target.result;
           img.classList.remove('hidden');
-        }
-        reader.readAsDataURL(file);
+          document.getElementById('carousel-index').innerText = `${index + 1}/${uploadedFiles.length}`;
+        };
+        reader.readAsDataURL(uploadedFiles[index]);
       }
     }
 
+    // CAMBIAR PREVISUALIZACIÓN ENTRE REDES
+    function switchPreviewNetwork(network) {
+      document.querySelectorAll('.prev-net-btn').forEach(btn => {
+        btn.className = 'prev-net-btn py-1.5 rounded-lg text-slate-400 hover:text-white flex items-center justify-center space-x-1';
+      });
+
+      const label = document.getElementById('prev-network-label');
+
+      if (network === 'instagram') {
+        document.getElementById('prev-net-instagram').className = 'prev-net-btn py-1.5 rounded-lg bg-pink-600 text-white flex items-center justify-center space-x-1';
+        label.innerText = 'Vista previa de Instagram (Formato Carrusel / Reel)';
+      } else if (network === 'facebook') {
+        document.getElementById('prev-net-facebook').className = 'prev-net-btn py-1.5 rounded-lg bg-blue-600 text-white flex items-center justify-center space-x-1';
+        label.innerText = 'Vista previa de Facebook (Álbum / Publicación)';
+      } else if (network === 'tiktok') {
+        document.getElementById('prev-net-tiktok').className = 'prev-net-btn py-1.5 rounded-lg bg-cyan-600 text-white flex items-center justify-center space-x-1';
+        label.innerText = 'Vista previa de TikTok (Photo Mode / Video Feed)';
+      }
+    }
+
+    function updatePreview() {
+      const text = document.getElementById('post-caption').value;
+      document.getElementById('preview-caption-text').innerText = text || 'Tu descripción aparecerá aquí en tiempo real...';
+      updateJSONOutput();
+    }
+
     function insertSampleCaption() {
-      const sample = "🔥 ¡Nuevo diseño exclusivo para Sublimación Deportiva! ⚽👕\n\nPersonaliza tu equipo con la mejor calidad de impresión. Contacto directo por DM o WhatsApp para cotizaciones.\n\n#Sublimacion #RopaDeportiva #Giograffik #DiseñoGrafico #Bolivia";
+      const sample = "🔥 ¡Nuevo catálogo exclusivo para Sublimación Deportiva Giograffik! ⚽👕\n\nDesliza para ver todos los ángulos y detalles del conjunto. Pedidos al mayor y menor con personalización total de nombre y número.\n\n#Sublimacion #RopaDeportiva #Giograffik #Bolivia #DiseñoDeportivo";
       document.getElementById('post-caption').value = sample;
       updatePreview();
     }
@@ -520,9 +647,29 @@
     function resetForm() {
       document.getElementById('post-caption').value = '';
       document.getElementById('file-input').value = '';
+      uploadedFiles = [];
+      document.getElementById('media-thumbs').classList.add('hidden');
+      document.getElementById('file-count').innerText = '0 Archivos cargados';
       document.getElementById('preview-img').classList.add('hidden');
       document.getElementById('preview-placeholder').classList.remove('hidden');
+      document.getElementById('carousel-badge').classList.add('hidden');
       updatePreview();
+    }
+
+    function insertQuickReply(type) {
+      const input = document.getElementById('reply-input');
+      if (type === 'precio') {
+        input.value = "¡Hola! Con gusto te cotizamos. El conjunto personalizado en sublimación tiene un costo especial. ¿Deseas que te enviemos la tabla de precios por WhatsApp?";
+      } else if (type === 'envios') {
+        input.value = "¡Hola! Sí, realizamos envíos a todo el país. Puedes revisar nuestro catálogo digital en giograffik.com o solicitar el PDF editable.";
+      }
+    }
+
+    function sendReply() {
+      const val = document.getElementById('reply-input').value;
+      if (!val) return;
+      alert("💬 ¡Respuesta enviada exitosamente al cliente desde la API de Giograffik!");
+      document.getElementById('reply-input').value = '';
     }
 
     function updateJSONOutput() {
@@ -531,15 +678,16 @@
 
       const payload = {
         app_author: "Giograffik",
-        publisher_engine: "Giograffik Social Publisher v4.0",
+        publisher_engine: "Giograffik Social Publisher v5.0",
         target_networks: [
           document.getElementById('chk-instagram').checked ? "instagram" : null,
           document.getElementById('chk-facebook').checked ? "facebook" : null,
           document.getElementById('chk-tiktok').checked ? "tiktok" : null
         ].filter(Boolean),
+        post_type: uploadedFiles.length > 1 ? "CAROUSEL_ALBUM" : "SINGLE_MEDIA",
+        total_files_attached: uploadedFiles.length,
         post_content: {
-          text_caption: document.getElementById('post-caption').value || "Ejemplo de publicación",
-          media_status: document.getElementById('file-input').files.length > 0 ? "Archivo Adjunto Listo" : "Sin archivo"
+          text_caption: document.getElementById('post-caption').value || "Ejemplo de publicación"
         },
         api_credentials: {
           meta_user_token: metaToken.substring(0, 15) + "...",
@@ -558,7 +706,7 @@
         return;
       }
       if (mode === 'now') {
-        alert("🚀 ¡Procesando publicación inmediata a través de la API!");
+        alert(`🚀 ¡Procesando publicación multi-red (${uploadedFiles.length || 1} archivos) a través de las APIs!`);
       } else {
         alert("📅 ¡Publicación añadida exitosamente al Calendario de Programación!");
         switchTab('calendario');
